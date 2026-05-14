@@ -1,16 +1,28 @@
 'use client'
 
-import { useMotionValue, motion, useMotionTemplate } from 'motion/react'
+import {
+  useMotionValue,
+  motion,
+  useMotionTemplate,
+  useReducedMotion,
+} from 'motion/react'
 
 /**
- * Dot pattern hero background with mouse-follow highlight.
- * Adapted from Aceternity HeroHighlight — tuned for AERA:
- *   - cream-100 base, taupe-500 dots, cocoa-700 highlight dots
- *   - no dark mode, no indigo/purple
+ * Hero background with dot grid + mouse-follow reveal.
+ * Wrapper component — content passed as children sits above dots (z-20).
+ * onMouseMove is on the wrapper itself so it always captures events.
+ *
+ * AERA palette: cream-100 base, taupe-500 static dots, cocoa-700 reveal dots.
+ * prefers-reduced-motion: only static dots, no reveal.
  */
-export function ShaderBackground() {
+export function ShaderBackground({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   const mouseX = useMotionValue(0)
   const mouseY = useMotionValue(0)
+  const shouldReduce = useReducedMotion()
 
   function handleMouseMove({
     currentTarget,
@@ -30,37 +42,42 @@ export function ShaderBackground() {
 
   return (
     <div
-      className="absolute inset-0 w-full h-full group"
+      className="relative overflow-hidden group"
       onMouseMove={handleMouseMove}
       style={{ background: '#F5EFE7' }}
     >
-      {/* Static dot grid — taupe on cream */}
+      {/* Static dot grid — subliminal taupe on cream */}
       <div
-        className="absolute inset-0 pointer-events-none opacity-40"
+        className="absolute inset-0 pointer-events-none opacity-[0.12]"
         style={dotPattern('rgb(140, 117, 103)')}
       />
 
-      {/* Mouse-follow highlight — cocoa dots revealed on hover */}
-      <motion.div
-        className="pointer-events-none absolute inset-0 opacity-0 transition duration-300 group-hover:opacity-100"
-        style={{
-          ...dotPattern('rgb(91, 70, 56)'),
-          WebkitMaskImage: useMotionTemplate`
-            radial-gradient(
-              200px circle at ${mouseX}px ${mouseY}px,
-              black 0%,
-              transparent 100%
-            )
-          `,
-          maskImage: useMotionTemplate`
-            radial-gradient(
-              200px circle at ${mouseX}px ${mouseY}px,
-              black 0%,
-              transparent 100%
-            )
-          `,
-        }}
-      />
+      {/* Mouse-follow reveal — cocoa dots, 300px radius */}
+      {!shouldReduce && (
+        <motion.div
+          className="pointer-events-none absolute inset-0 opacity-0 transition duration-300 group-hover:opacity-100"
+          style={{
+            ...dotPattern('rgb(91, 70, 56)'),
+            WebkitMaskImage: useMotionTemplate`
+              radial-gradient(
+                300px circle at ${mouseX}px ${mouseY}px,
+                black 0%,
+                transparent 100%
+              )
+            `,
+            maskImage: useMotionTemplate`
+              radial-gradient(
+                300px circle at ${mouseX}px ${mouseY}px,
+                black 0%,
+                transparent 100%
+              )
+            `,
+          }}
+        />
+      )}
+
+      {/* Content above dots */}
+      <div className="relative z-20">{children}</div>
     </div>
   )
 }

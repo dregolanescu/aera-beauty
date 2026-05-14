@@ -3,10 +3,8 @@ import { ShaderBackground } from "./ShaderBackground";
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden">
-      <ShaderBackground />
-
-      <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-12 pt-28 pb-32 md:pt-40 md:pb-48">
+    <ShaderBackground>
+      <div className="mx-auto max-w-7xl px-6 lg:px-12 pt-28 pb-32 md:pt-40 md:pb-48">
         <div className="max-w-5xl">
           <h1 className="hero-title">For the love of Beauty</h1>
 
@@ -36,6 +34,6 @@ export function Hero() {
           </div>
         </div>
       </div>
-    </section>
+    </ShaderBackground>
   );
 }
