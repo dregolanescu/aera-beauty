@@ -52,23 +52,27 @@ export function ShaderBackground({
         style={dotPattern('rgb(140, 117, 103)')}
       />
 
-      {/* Mouse-follow reveal — cocoa dots, 300px radius */}
+      {/* Mouse-follow reveal — taupe dots, 280px radius, faded with gradual mask.
+          Taupe (warmer than cocoa) + 55% opacity + soft mask falloff = no conflict
+          with hero text, but pigments still emerge under the cursor. */}
       {!shouldReduce && (
         <motion.div
-          className="pointer-events-none absolute inset-0 opacity-0 transition duration-300 group-hover:opacity-100"
+          className="pointer-events-none absolute inset-0 opacity-0 transition duration-300 group-hover:opacity-[0.55]"
           style={{
-            ...dotPattern('rgb(91, 70, 56)'),
+            ...dotPattern('rgb(140, 117, 103)'),
             WebkitMaskImage: useMotionTemplate`
               radial-gradient(
-                300px circle at ${mouseX}px ${mouseY}px,
-                black 0%,
+                280px circle at ${mouseX}px ${mouseY}px,
+                rgba(0,0,0,0.95) 0%,
+                rgba(0,0,0,0.5) 45%,
                 transparent 100%
               )
             `,
             maskImage: useMotionTemplate`
               radial-gradient(
-                300px circle at ${mouseX}px ${mouseY}px,
-                black 0%,
+                280px circle at ${mouseX}px ${mouseY}px,
+                rgba(0,0,0,0.95) 0%,
+                rgba(0,0,0,0.5) 45%,
                 transparent 100%
               )
             `,
