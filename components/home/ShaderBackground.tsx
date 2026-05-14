@@ -9,9 +9,13 @@ const vertexShader = `
   }
 `
 
-// Fragment shader: warm concentric rings on cream-100 (#F5EFE7)
-// Rings tinted with cocoa tones — like warm light rippling on a cream surface
+// Original shader — colorful concentric rings on black.
+// Displayed with mix-blend-mode: screen so black = transparent,
+// rings add light to the cream page background.
 const fragmentShader = `
+  #define TWO_PI 6.2831853072
+  #define PI 3.14159265359
+
   precision highp float;
   uniform vec2 resolution;
   uniform float time;
@@ -21,34 +25,26 @@ const fragmentShader = `
     float t = time * 0.05;
     float lineWidth = 0.002;
 
-    vec3 rings = vec3(0.0);
+    vec3 color = vec3(0.0);
     for (int j = 0; j < 3; j++) {
       for (int i = 0; i < 5; i++) {
-        rings[j] += lineWidth * float(i * i) / abs(
+        color[j] += lineWidth * float(i * i) / abs(
           fract(t - 0.01 * float(j) + float(i) * 0.01) * 5.0
           - length(uv) + mod(uv.x + uv.y, 0.2)
         );
       }
     }
 
-    // cream-100 base + warm cocoa-tinted glow
-    vec3 cream = vec3(0.961, 0.937, 0.906);
-    vec3 warmGlow = rings * vec3(0.35, 0.28, 0.22);
-    gl_FragColor = vec4(cream + warmGlow, 1.0);
+    gl_FragColor = vec4(color, 1.0);
   }
 `
 
 export function ShaderBackground() {
   const containerRef = useRef<HTMLDivElement>(null)
-  const sceneRef = useRef<{
-    renderer: THREE.WebGLRenderer
-    animationId: number
-  } | null>(null)
 
   useEffect(() => {
     if (!containerRef.current) return
 
-    // Respect reduced motion
     const prefersReduced = window.matchMedia(
       '(prefers-reduced-motion: reduce)',
     ).matches
@@ -100,7 +96,6 @@ export function ShaderBackground() {
       renderer.render(scene, camera)
     }
 
-    sceneRef.current = { renderer, animationId }
     animate()
 
     return () => {
@@ -119,7 +114,10 @@ export function ShaderBackground() {
     <div
       ref={containerRef}
       className="absolute inset-0"
-      style={{ background: '#F5EFE7' }}
+      style={{
+        background: '#000',
+        mixBlendMode: 'screen',
+      }}
       aria-hidden="true"
     />
   )
