@@ -11,14 +11,39 @@ type MovingBorderButtonProps = {
   className?: string
   onClick?: () => void
   type?: 'button' | 'submit'
+  size?: 'default' | 'sm'
 }
 
+const sizeStyles = {
+  default: {
+    fontSize: '0.78rem',
+    letterSpacing: '0.08em',
+    padding: '12px 22px',
+    minHeight: '42px',
+  },
+  sm: {
+    fontSize: '0.72rem',
+    letterSpacing: '0.08em',
+    padding: '10px 18px',
+    minHeight: '36px',
+  },
+} as const
+
+const shadowDefault =
+  'inset 0 1px 0 rgba(251, 247, 240, 0.08), 0 2px 8px rgba(61, 47, 37, 0.12)'
+const shadowHover =
+  'inset 0 1px 0 rgba(251, 247, 240, 0.1), 0 4px 12px rgba(61, 47, 37, 0.18)'
+
 /**
- * Primary button with "travelling light" border effect on hover.
- * Inspired by Aceternity UI Moving Border, tuned for quiet luxury:
- * slow (6s), ivory glow at 35% opacity, blur 10px.
- * Looks like reflected light on a perfume bottle's lacquer, not neon.
- * Completely disabled under prefers-reduced-motion.
+ * Primary button with tactile depth and "travelling light" border on hover.
+ *
+ * Visual language: refined beauty packaging detail.
+ * - Inset top highlight = light catching the top edge of lacquer
+ * - Outer shadow = physical depth, button sits above the surface
+ * - Travelling light = soft pearlescent reflection on hover (6s, ivory glow)
+ * - Hover lift = -1px, shadow deepens
+ *
+ * Completely safe under prefers-reduced-motion (light effect disabled).
  */
 export function MovingBorderButton({
   href,
@@ -26,31 +51,32 @@ export function MovingBorderButton({
   className,
   onClick,
   type = 'button',
+  size = 'default',
 }: MovingBorderButtonProps) {
   const [isHovered, setIsHovered] = useState(false)
   const shouldReduce = useReducedMotion()
-
-  const btnStyle = {
-    fontSize: '0.78rem',
-    letterSpacing: '0.08em',
-    padding: '0.85rem 1.4rem',
-  }
 
   const innerClasses = cn(
     'relative z-10 inline-flex w-full items-center justify-center',
     'font-medium uppercase',
     'bg-cocoa-700 text-ivory-50 rounded-[13px]',
-    'border-[0.5px] border-cocoa-700/80',
-    'transition-colors duration-[280ms] ease-out',
-    'hover:bg-cocoa-900',
+    'border-[0.5px] border-cocoa-700/70',
+    'transition-all duration-[280ms] ease-out',
+    'hover:bg-cocoa-900 hover:-translate-y-px',
   )
 
+  const innerStyle = {
+    ...sizeStyles[size],
+    boxShadow: isHovered ? shadowHover : shadowDefault,
+    transition: 'all 280ms ease-out',
+  }
+
   const inner = href ? (
-    <Link href={href} className={innerClasses} style={btnStyle}>
+    <Link href={href} className={innerClasses} style={innerStyle}>
       {children}
     </Link>
   ) : (
-    <button type={type} onClick={onClick} className={innerClasses} style={btnStyle}>
+    <button type={type} onClick={onClick} className={innerClasses} style={innerStyle}>
       {children}
     </button>
   )
@@ -61,7 +87,7 @@ export function MovingBorderButton({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Travelling light — conic gradient glow rotating behind the button border */}
+      {/* Travelling light — pearlescent reflection on hover, not neon */}
       <AnimatePresence>
         {isHovered && !shouldReduce && (
           <motion.div

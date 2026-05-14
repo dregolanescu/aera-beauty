@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Logo } from "./Logo";
+import { Button } from "@/components/ui/Button";
 
 const navLinks = [
   { href: "/despre", label: "Despre" },
@@ -28,13 +29,9 @@ export function Header() {
           ))}
         </nav>
 
-        <Link
-          href="#precomanda"
-          className="button-label bg-cocoa-700 text-ivory-50 px-5 py-2.5 hover:bg-cocoa-900 transition-colors"
-          style={{ borderRadius: "2px" }}
-        >
+        <Button href="#precomanda" variant="primary" size="sm">
           Precomandă
-        </Link>
+        </Button>
       </div>
     </header>
   );

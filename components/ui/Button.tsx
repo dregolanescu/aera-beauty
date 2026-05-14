@@ -4,6 +4,7 @@ import { MovingBorderButton } from "./MovingBorderButton";
 
 type ButtonProps = {
   variant?: "primary" | "ghost";
+  size?: "default" | "sm";
   href?: string;
   children: React.ReactNode;
   className?: string;
@@ -11,27 +12,38 @@ type ButtonProps = {
   type?: "button" | "submit";
 };
 
-const btnStyle = {
-  fontSize: "0.78rem",
-  letterSpacing: "0.08em",
-  padding: "0.85rem 1.4rem",
-};
+const sizeStyles = {
+  default: {
+    fontSize: "0.78rem",
+    letterSpacing: "0.08em",
+    padding: "12px 22px",
+    minHeight: "42px",
+  },
+  sm: {
+    fontSize: "0.72rem",
+    letterSpacing: "0.08em",
+    padding: "10px 18px",
+    minHeight: "36px",
+  },
+} as const;
 
 export function Button({
   variant = "primary",
+  size = "default",
   href,
   children,
   className,
   onClick,
   type = "button",
 }: ButtonProps) {
-  // Primary variant — delegates to MovingBorderButton (travelling light effect)
+  // Primary — delegates to MovingBorderButton (shadows + travelling light)
   if (variant === "primary") {
     return (
       <MovingBorderButton
         href={href}
         onClick={onClick}
         type={type}
+        size={size}
         className={className}
       >
         {children}
@@ -39,7 +51,7 @@ export function Button({
     );
   }
 
-  // Ghost variant
+  // Ghost — elegant, warm beige hover, no shadow
   const ghostClasses = cn(
     "inline-flex items-center justify-center font-medium uppercase",
     "bg-transparent text-cocoa-700 rounded-[14px]",
@@ -51,7 +63,7 @@ export function Button({
 
   if (href) {
     return (
-      <Link href={href} className={ghostClasses} style={btnStyle}>
+      <Link href={href} className={ghostClasses} style={sizeStyles[size]}>
         {children}
       </Link>
     );
@@ -62,7 +74,7 @@ export function Button({
       type={type}
       onClick={onClick}
       className={ghostClasses}
-      style={btnStyle}
+      style={sizeStyles[size]}
     >
       {children}
     </button>
