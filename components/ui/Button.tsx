@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { MovingBorderButton } from "./MovingBorderButton";
 
 type ButtonProps = {
   variant?: "primary" | "ghost";
@@ -10,6 +11,12 @@ type ButtonProps = {
   type?: "button" | "submit";
 };
 
+const btnStyle = {
+  fontSize: "0.78rem",
+  letterSpacing: "0.08em",
+  padding: "0.85rem 1.4rem",
+};
+
 export function Button({
   variant = "primary",
   href,
@@ -18,28 +25,45 @@ export function Button({
   onClick,
   type = "button",
 }: ButtonProps) {
-  const base =
-    "button-label inline-flex items-center justify-center px-7 py-3.5 transition-colors duration-200";
+  // Primary variant — delegates to MovingBorderButton (travelling light effect)
+  if (variant === "primary") {
+    return (
+      <MovingBorderButton
+        href={href}
+        onClick={onClick}
+        type={type}
+        className={className}
+      >
+        {children}
+      </MovingBorderButton>
+    );
+  }
 
-  const variants = {
-    primary: "bg-cocoa-700 text-ivory-50 hover:bg-cocoa-900",
-    ghost:
-      "bg-transparent text-cocoa-700 border-[0.5px] border-cocoa-700 hover:bg-cocoa-700 hover:text-ivory-50",
-  };
-
-  const classes = cn(base, variants[variant], className);
-  const style = { borderRadius: "2px" };
+  // Ghost variant
+  const ghostClasses = cn(
+    "inline-flex items-center justify-center font-medium uppercase",
+    "bg-transparent text-cocoa-700 rounded-[14px]",
+    "border-[0.5px] border-cocoa-700",
+    "transition-all duration-[280ms] ease-out",
+    "hover:bg-cream-100 hover:text-cocoa-900",
+    className,
+  );
 
   if (href) {
     return (
-      <Link href={href} className={classes} style={style}>
+      <Link href={href} className={ghostClasses} style={btnStyle}>
         {children}
       </Link>
     );
   }
 
   return (
-    <button type={type} onClick={onClick} className={classes} style={style}>
+    <button
+      type={type}
+      onClick={onClick}
+      className={ghostClasses}
+      style={btnStyle}
+    >
       {children}
     </button>
   );

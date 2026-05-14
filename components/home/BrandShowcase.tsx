@@ -41,6 +41,11 @@ const brands = [
   },
 ] as const
 
+const cardShadow =
+  '0 1px 3px rgba(61, 47, 37, 0.04), 0 8px 24px rgba(61, 47, 37, 0.03)'
+const cardShadowHover =
+  '0 2px 6px rgba(61, 47, 37, 0.06), 0 12px 32px rgba(61, 47, 37, 0.05)'
+
 export function BrandShowcase() {
   const shouldReduce = useReducedMotion()
 
@@ -61,46 +66,70 @@ export function BrandShowcase() {
                 delay: shouldReduce ? 0 : i * 0.08,
               }}
             >
-              <Link
-                href={brand.href}
-                className="group flex flex-col h-full bg-ivory-50 border border-stone-200 rounded-md p-8 lg:p-10 transition-transform duration-200 ease-out hover:-translate-y-1"
-                style={{ borderWidth: '0.5px' }}
-              >
-                <div className="mb-6 h-16 flex items-center overflow-hidden">
-                  {brand.isPng ? (
-                    <Image
-                      src={brand.logo}
-                      alt={brand.alt}
-                      width={400}
-                      height={400}
-                      className={`${brand.logoClassName} max-h-12 w-auto object-contain transition-transform duration-200 ease-out group-hover:scale-[1.03]`}
-                    />
-                  ) : (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={brand.logo}
-                      alt={brand.alt}
-                      className={`${brand.logoClassName} max-h-12 w-auto object-contain transition-transform duration-200 ease-out group-hover:scale-[1.03]`}
-                    />
-                  )}
-                </div>
-
-                <p className="eyebrow mb-3">{brand.category}</p>
-
-                <h3 className="card-title mb-3">{brand.name}</h3>
-
-                <p className="body text-cocoa-700 flex-1">
-                  {brand.description}
-                </p>
-
-                <span className="mt-6 text-cocoa-700 font-medium tracking-wide group-hover:text-cocoa-900 transition-colors duration-200 border-b border-cocoa-700/30 group-hover:border-cocoa-900 pb-0.5 self-start">
-                  Vezi colecția &rarr;
-                </span>
-              </Link>
+              <BrandCard brand={brand} />
             </motion.div>
           ))}
         </div>
       </div>
     </section>
+  )
+}
+
+function BrandCard({
+  brand,
+}: {
+  brand: (typeof brands)[number]
+}) {
+  return (
+    <Link
+      href={brand.href}
+      className="group flex flex-col h-full bg-ivory-50 rounded-md p-8 md:p-10 border border-stone-200 transition-all duration-[320ms] ease-out hover:-translate-y-0.5 hover:border-taupe-500/30"
+      style={{
+        borderWidth: '0.5px',
+        boxShadow: cardShadow,
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.boxShadow = cardShadowHover
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.boxShadow = cardShadow
+      }}
+    >
+      {/* Logo container — fixed height, visually aligned across all 3 cards */}
+      <div className="mb-6 h-20 flex items-center justify-center overflow-hidden">
+        {brand.isPng ? (
+          <Image
+            src={brand.logo}
+            alt={brand.alt}
+            width={400}
+            height={400}
+            className={`${brand.logoClassName} max-h-14 w-auto object-contain transition-transform duration-[320ms] ease-out group-hover:scale-[1.03]`}
+          />
+        ) : (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={brand.logo}
+            alt={brand.alt}
+            className={`${brand.logoClassName} max-h-14 w-auto object-contain transition-transform duration-[320ms] ease-out group-hover:scale-[1.03]`}
+          />
+        )}
+      </div>
+
+      <p className="eyebrow mb-3">{brand.category}</p>
+
+      <h3 className="card-title mb-3">{brand.name}</h3>
+
+      <p className="body text-cocoa-700 flex-1">{brand.description}</p>
+
+      {/* CTA with arrow slide on hover */}
+      <span className="mt-6 inline-flex items-center gap-1 self-start text-cocoa-700 font-medium tracking-wide group-hover:text-cocoa-900 transition-colors duration-[280ms]">
+        <span className="border-b border-cocoa-700/30 group-hover:border-cocoa-900 pb-0.5 transition-colors duration-[280ms]">
+          Vezi colecția
+        </span>
+        <span className="inline-block transition-transform duration-[240ms] ease-out group-hover:translate-x-1">
+          &rarr;
+        </span>
+      </span>
+    </Link>
   )
 }
