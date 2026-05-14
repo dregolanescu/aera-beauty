@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import Image from 'next/image'
+import { Logo } from './Logo'
 
 const eyebrowStyle = { color: 'var(--color-taupe-500)' }
 const mutedLinkClass =
@@ -7,21 +7,24 @@ const mutedLinkClass =
 
 export function Footer() {
   return (
-    <footer className="mt-20 bg-ivory-50 border-t border-stone-200 relative overflow-hidden">
-      <div className="mx-auto max-w-7xl px-6 lg:px-12 pt-14 md:pt-16 pb-6 relative z-10">
-        {/* Tagline editorial */}
-        <p
-          className="mb-12 md:mb-16 max-w-xl"
-          style={{
-            fontFamily: 'var(--font-bodoni-moda), Georgia, serif',
-            fontSize: '22px',
-            lineHeight: 1.3,
-            color: 'var(--color-cocoa-700)',
-          }}
-        >
-          For the love of{' '}
-          <span style={{ fontStyle: 'italic' }}>Beauty.</span>
-        </p>
+    <footer className="mt-20 bg-ivory-50 border-t border-stone-200">
+      <div className="mx-auto max-w-7xl px-6 lg:px-12 pt-14 md:pt-16 pb-6">
+        {/* Logo + tagline editorial */}
+        <div className="mb-12 md:mb-16">
+          <Logo variant="mocha" className="h-12 md:h-14 w-auto mb-5" />
+          <p
+            className="max-w-xl"
+            style={{
+              fontFamily: 'var(--font-bodoni-moda), Georgia, serif',
+              fontSize: '22px',
+              lineHeight: 1.3,
+              color: 'var(--color-cocoa-700)',
+            }}
+          >
+            For the love of{' '}
+            <span style={{ fontStyle: 'italic' }}>Beauty.</span>
+          </p>
+        </div>
 
         <div className="grid md:grid-cols-12 gap-8 mb-12">
           {/* Navigație */}
@@ -149,22 +152,6 @@ export function Footer() {
         </div>
       </div>
 
-      {/* Big decorative wordmark — ivory pe ivory, subtle accent */}
-      <div
-        aria-hidden="true"
-        className="relative w-full mt-4 md:mt-8 select-none pointer-events-none"
-        style={{ lineHeight: 0 }}
-      >
-        <Image
-          src="/logo/aera-footer-taupe.png"
-          alt=""
-          width={1428}
-          height={454}
-          className="w-full h-auto"
-          style={{ opacity: 0.7 }}
-          priority={false}
-        />
-      </div>
     </footer>
   )
 }
