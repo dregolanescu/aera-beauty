@@ -6,7 +6,12 @@ export function Hero() {
     <ShaderBackground>
       <div className="mx-auto max-w-7xl px-6 lg:px-12 pt-28 pb-32 md:pt-40 md:pb-48">
         <div className="max-w-5xl">
-          <h1 className="hero-title">For the love of Beauty</h1>
+          <h1
+            className="hero-title"
+            style={{ color: "var(--color-cocoa-700)" }}
+          >
+            For the love of Beauty
+          </h1>
 
           <p
             className="section-title mt-6 md:mt-8 max-w-3xl"

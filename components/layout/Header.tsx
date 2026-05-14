@@ -21,7 +21,7 @@ export function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className="button-label text-cocoa-700 hover:text-cocoa-900 transition-colors"
+              className="aera-nav-link button-label"
               style={{ letterSpacing: "0.04em", textTransform: "none", fontSize: "14px" }}
             >
               {link.label}
