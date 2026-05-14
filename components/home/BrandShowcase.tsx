@@ -103,7 +103,7 @@ function BrandCard({
             alt={brand.alt}
             width={400}
             height={400}
-            className={`${brand.logoClassName} max-h-14 w-auto object-contain transition-transform duration-[320ms] ease-out group-hover:scale-[1.03]`}
+            className={`${brand.logoClassName} w-auto object-contain transition-transform duration-[320ms] ease-out group-hover:scale-[1.03]`}
           />
         ) : (
           // eslint-disable-next-line @next/next/no-img-element

@@ -67,7 +67,7 @@ export default function ProdusePage() {
                           alt={`${brand.name} — ${brand.category.toLowerCase()}`}
                           width={400}
                           height={400}
-                          className="h-[200px] max-h-14 w-auto object-contain transition-transform duration-[320ms] ease-out group-hover:scale-[1.03]"
+                          className="h-[200px] w-auto object-contain transition-transform duration-[320ms] ease-out group-hover:scale-[1.03]"
                         />
                       ) : (
                         // eslint-disable-next-line @next/next/no-img-element
