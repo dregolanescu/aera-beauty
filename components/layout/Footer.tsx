@@ -156,12 +156,12 @@ export function Footer() {
         style={{ lineHeight: 0 }}
       >
         <Image
-          src="/logo/aera-footer.png"
+          src="/logo/aera-footer-taupe.png"
           alt=""
           width={1428}
           height={454}
           className="w-full h-auto"
-          style={{ opacity: 0.55 }}
+          style={{ opacity: 0.7 }}
           priority={false}
         />
       </div>
