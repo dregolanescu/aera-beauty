@@ -164,8 +164,9 @@ body {
   -webkit-appearance: none;
   background: transparent;
   box-shadow:
-    0 2px 12px rgba(61, 47, 37, 0.2),
-    0 0 28px rgba(255, 240, 210, 0.22);
+    0 3px 10px rgba(61, 47, 37, 0.25),
+    0 8px 24px rgba(61, 47, 37, 0.15),
+    0 0 32px rgba(255, 240, 210, 0.3);
   transition: transform 320ms ease, box-shadow 320ms ease;
 }
 
@@ -208,10 +209,11 @@ body {
 }
 
 .aera-cta-wrap:hover {
-  transform: translateY(-1px);
+  transform: translateY(-2px);
   box-shadow:
-    0 8px 22px rgba(61, 47, 37, 0.25),
-    0 0 40px rgba(255, 240, 210, 0.4);
+    0 6px 16px rgba(61, 47, 37, 0.3),
+    0 14px 36px rgba(61, 47, 37, 0.18),
+    0 0 44px rgba(255, 240, 210, 0.45);
 }
 
 @keyframes aera-cta-glow-spin {
