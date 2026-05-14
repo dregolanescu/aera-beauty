@@ -173,7 +173,7 @@ export async function submitPrecomanda(
       await resend.emails.send({
         from: 'AERA Beauty <noreply@aerabeauty.ro>',
         to: d.email,
-        subject: 'Am primit cererea ta · AERA Beauty',
+        subject: 'Am primit cererea ta - AERA Beauty',
         html: buildUserConfirmationHtml(d.name),
       })
     } catch (err) {

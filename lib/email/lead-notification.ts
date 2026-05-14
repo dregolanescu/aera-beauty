@@ -116,5 +116,8 @@ export function buildLeadNotificationHtml(data: LeadData): string {
 
 export function buildLeadNotificationSubject(name: string, brand: string): string {
   const brandLabel = brandLabels[brand] ?? brand
-  return `Lead nou — ${name} · ${brandLabel}`
+  // ASCII-safe separators. Em-dash and middle-dot cause encoding glitches
+  // (â€" and Â·) in some mail clients (Microsoft Outlook) when the SMTP
+  // Subject header isn't MIME-encoded as quoted-printable / base64.
+  return `Lead nou: ${name} (${brandLabel})`
 }
