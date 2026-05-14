@@ -13,6 +13,12 @@ export function Hero() {
             <span style={{ fontStyle: "italic" }}>Beauty.</span>
           </h1>
 
+          <p className="page-title mt-4 max-w-3xl">
+            Frumusețe curată,
+            <br />
+            <span style={{ fontStyle: "italic" }}>aleasă cu discernământ.</span>
+          </p>
+
           <p
             className="body-large mt-8 max-w-2xl"
             style={{ color: "var(--color-cocoa-700)" }}
