@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react'
 import { X } from 'lucide-react'
 import { Logo } from './Logo'
@@ -22,6 +23,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
   const shouldReduce = useReducedMotion()
   const closeRef = useRef<HTMLButtonElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
+  const pathname = usePathname()
 
   // ESC to close
   useEffect(() => {
@@ -144,6 +146,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                     letterSpacing: '-0.025em',
                     lineHeight: 1.1,
                   }}
+                  aria-current={pathname === link.href ? 'page' : undefined}
                 >
                   {link.label}
                 </Link>

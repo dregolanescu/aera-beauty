@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { Menu } from 'lucide-react'
 import { Logo } from './Logo'
 import { PrecomandaCTA } from '@/components/precomanda/PrecomandaCTA'
@@ -16,6 +17,7 @@ const navLinks = [
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const burgerRef = useRef<HTMLButtonElement>(null)
+  const pathname = usePathname()
 
   function handleClose() {
     setMenuOpen(false)
@@ -47,6 +49,7 @@ export function Header() {
                   textTransform: 'none',
                   fontSize: '14px',
                 }}
+                aria-current={pathname === link.href ? 'page' : undefined}
               >
                 {link.label}
               </Link>
