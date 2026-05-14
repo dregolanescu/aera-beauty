@@ -139,9 +139,10 @@ body {
 
 /* ──────────────────────────────────────────────────────────────────
    Buton primar cu halo rotativ permanent (premium beauty)
-   - peak alb pearlescent + fade warm cream
-   - rotație continuă 5s pe @property angle (fluid pe curbe rotunjite)
-   - drop shadow exterior auriu pentru glow ambient
+   Structură: .aera-cta-wrap > .aera-cta-halo + .aera-cta-face
+   - wrap: outer container cu padding 2px (creează gap-ul de border)
+   - halo: gradient conic rotativ, umple wrap-ul (vizibil prin gap)
+   - face: mocha solid, acoperă centrul, text ivory deasupra
    ────────────────────────────────────────────────────────────────── */
 
 @property --aera-angle {
@@ -150,34 +151,30 @@ body {
   inherits: false;
 }
 
-.aera-cta-glow {
+/* Outer container — holds the 2px border gap */
+.aera-cta-wrap {
   position: relative;
-  isolation: isolate;
   display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  padding: 2px;
+  border-radius: 18px;
   cursor: pointer;
   text-decoration: none;
   border: none;
   appearance: none;
   -webkit-appearance: none;
-  font-family: var(--font-sans);
-  font-weight: 500;
-  text-transform: uppercase;
-  color: var(--color-ivory-50);
-  background-color: var(--color-cocoa-700);
-  background-image: none;
-  border-radius: 18px;
+  background: transparent;
   box-shadow:
     0 2px 12px rgba(61, 47, 37, 0.2),
     0 0 28px rgba(255, 240, 210, 0.22);
   transition: transform 320ms ease, box-shadow 320ms ease;
 }
-.aera-cta-glow::before {
-  content: "";
+
+/* Rotating gradient — fills the wrap, visible only through the 2px gap */
+.aera-cta-halo {
   position: absolute;
-  inset: -2px;
-  border-radius: 20px;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
   background: conic-gradient(
     from var(--aera-angle),
     transparent 0deg,
@@ -188,10 +185,29 @@ body {
     transparent 360deg
   );
   animation: aera-cta-glow-spin 4s linear infinite;
-  z-index: -1;
-  pointer-events: none;
 }
-.aera-cta-glow:hover {
+
+/* Inner face — mocha solid, covers center, text on top */
+.aera-cta-face {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  background-color: var(--color-cocoa-700);
+  color: var(--color-ivory-50);
+  border-radius: 16px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  text-transform: uppercase;
+  transition: background-color 280ms ease;
+}
+.aera-cta-face:hover {
+  background-color: var(--color-cocoa-900);
+}
+
+.aera-cta-wrap:hover {
   transform: translateY(-1px);
   box-shadow:
     0 8px 22px rgba(61, 47, 37, 0.25),
@@ -203,7 +219,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .aera-cta-glow::before {
+  .aera-cta-halo {
     animation: none;
     background: linear-gradient(135deg, rgba(255, 245, 220, 0.4), rgba(255, 255, 255, 0.7));
   }

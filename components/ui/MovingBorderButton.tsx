@@ -26,17 +26,14 @@ const sizeStyles = {
 } as const;
 
 /**
- * Primary button with permanent rotating halo on border.
+ * Primary button with permanent rotating halo on inner border.
  *
- * Visual language: premium beauty packaging detail.
- * - Mocha solid background (#5B4638)
- * - Pseudo-element `::before` with inset -2px sits behind the button
- * - Conic gradient with pearlescent white peak rotates continuously (4s)
- * - Outer drop shadow adds soft ambient glow on cream backgrounds
- * - Hover lifts -1px and intensifies the outer glow
+ * Structure: wrap (2px padding) > halo (gradient) + face (mocha solid).
+ * The 2px gap between wrap (18px radius) and face (16px radius)
+ * reveals the rotating conic gradient — like light travelling along
+ * the edge of lacquered packaging.
  *
- * Implementation in `app/globals.css` via class `.aera-cta-glow`.
- * Respects prefers-reduced-motion (animation disabled, static gradient retained).
+ * CSS classes in globals.css: .aera-cta-wrap, .aera-cta-halo, .aera-cta-face
  */
 export function MovingBorderButton({
   href,
@@ -46,20 +43,32 @@ export function MovingBorderButton({
   type = "button",
   size = "default",
 }: MovingBorderButtonProps) {
-  const classes = cn("aera-cta-glow", className);
-  const style = sizeStyles[size];
+  const faceStyle = sizeStyles[size];
+
+  const inner = (
+    <>
+      <span className="aera-cta-halo" aria-hidden="true" />
+      <span className="aera-cta-face" style={faceStyle}>
+        {children}
+      </span>
+    </>
+  );
 
   if (href) {
     return (
-      <Link href={href} className={classes} style={style}>
-        {children}
+      <Link href={href} className={cn("aera-cta-wrap", className)}>
+        {inner}
       </Link>
     );
   }
 
   return (
-    <button type={type} onClick={onClick} className={classes} style={style}>
-      {children}
+    <button
+      type={type}
+      onClick={onClick}
+      className={cn("aera-cta-wrap", className)}
+    >
+      {inner}
     </button>
   );
 }
