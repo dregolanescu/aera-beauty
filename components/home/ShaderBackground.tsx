@@ -42,8 +42,10 @@ export function ShaderBackground() {
           }
         }
 
-        /* inversare culori — inele intunecate pe fundal alb */
-        gl_FragColor = vec4(1.0 - color[0], 1.0 - color[1], 1.0 - color[2], 1.0);
+        /* inversare + tint cream-100 (#F5EFE7 = 0.961, 0.937, 0.906) */
+        vec3 cream = vec3(0.961, 0.937, 0.906);
+        vec3 inverted = cream - color;
+        gl_FragColor = vec4(inverted, 1.0);
       }
     `
 
@@ -99,7 +101,7 @@ export function ShaderBackground() {
     <div
       ref={containerRef}
       className="absolute inset-0 w-full h-full"
-      style={{ background: '#fff', overflow: 'hidden' }}
+      style={{ background: '#F5EFE7', overflow: 'hidden' }}
     />
   )
 }
