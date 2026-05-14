@@ -9,7 +9,6 @@ type Props = {
 
 export function BrandCTA({ brand }: Props) {
   const { open } = usePrecomanda()
-  const isMatcha = brand.slug === 'redefine-matcha'
 
   return (
     <section className="border-t border-stone-200">
@@ -28,7 +27,6 @@ export function BrandCTA({ brand }: Props) {
           <button
             onClick={() => open({ brand: brand.slug })}
             className="aera-cta-wrap"
-            data-accent={isMatcha ? 'matcha' : undefined}
           >
             <span className="aera-cta-halo" aria-hidden="true" />
             <span

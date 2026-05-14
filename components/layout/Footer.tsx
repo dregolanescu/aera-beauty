@@ -1,33 +1,31 @@
-import Link from "next/link";
-import { Logo } from "./Logo";
+import Link from 'next/link'
+import Image from 'next/image'
 
-const eyebrowStyle = { color: "rgba(251, 247, 240, 0.6)" };
-const mutedLinkClass = "hover:text-ivory-50/70 transition-colors";
+const eyebrowStyle = { color: 'var(--color-taupe-500)' }
+const mutedLinkClass =
+  'text-cocoa-700 hover:text-cocoa-900 transition-colors duration-200'
 
 export function Footer() {
   return (
-    <footer className="mt-20 bg-cocoa-900 text-ivory-50">
-      <div className="mx-auto max-w-7xl px-6 lg:px-12 py-10 md:py-12">
-        <div className="grid md:grid-cols-12 gap-8 mb-8">
-          {/* Brand block */}
-          <div className="md:col-span-4">
-            <Logo variant="ivory" className="h-10 md:h-14 w-auto mb-4" />
-            <p
-              className="max-w-sm"
-              style={{
-                fontFamily: "var(--font-bodoni-moda), Georgia, serif",
-                fontSize: "18px",
-                lineHeight: 1.3,
-                color: "rgba(251, 247, 240, 0.85)",
-              }}
-            >
-              For the love of{" "}
-              <span style={{ fontStyle: "italic" }}>Beauty.</span>
-            </p>
-          </div>
+    <footer className="mt-20 bg-ivory-50 border-t border-stone-200 relative overflow-hidden">
+      <div className="mx-auto max-w-7xl px-6 lg:px-12 pt-14 md:pt-16 pb-6 relative z-10">
+        {/* Tagline editorial */}
+        <p
+          className="mb-12 md:mb-16 max-w-xl"
+          style={{
+            fontFamily: 'var(--font-bodoni-moda), Georgia, serif',
+            fontSize: '22px',
+            lineHeight: 1.3,
+            color: 'var(--color-cocoa-700)',
+          }}
+        >
+          For the love of{' '}
+          <span style={{ fontStyle: 'italic' }}>Beauty.</span>
+        </p>
 
+        <div className="grid md:grid-cols-12 gap-8 mb-12">
           {/* Navigație */}
-          <div className="md:col-span-2">
+          <div className="md:col-span-3">
             <h3 className="eyebrow mb-3" style={eyebrowStyle}>
               Navigație
             </h3>
@@ -45,6 +43,39 @@ export function Footer() {
               <li>
                 <Link href="/colaboreaza" className={mutedLinkClass}>
                   Colaborează
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Branduri */}
+          <div className="md:col-span-3">
+            <h3 className="eyebrow mb-3" style={eyebrowStyle}>
+              Branduri
+            </h3>
+            <ul className="space-y-1.5 text-sm">
+              <li>
+                <Link
+                  href="/produse/aqua-mineral"
+                  className={mutedLinkClass}
+                >
+                  Aqua Mineral
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/produse/oliere-paris"
+                  className={mutedLinkClass}
+                >
+                  Oliere Paris
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/produse/redefine-matcha"
+                  className={mutedLinkClass}
+                >
+                  Redefine Matcha
                 </Link>
               </li>
             </ul>
@@ -88,8 +119,7 @@ export function Footer() {
               Firmă
             </h3>
             <address
-              className="not-italic text-sm leading-snug"
-              style={{ color: "rgba(251, 247, 240, 0.7)" }}
+              className="not-italic text-sm leading-snug text-taupe-500"
             >
               SC AERA SCENTT SRL · Importator unic
               <br />
@@ -102,10 +132,8 @@ export function Footer() {
           </div>
         </div>
 
-        <div
-          className="pt-6 border-t border-ivory-50/10 flex flex-col md:flex-row justify-between gap-3 text-xs"
-          style={{ color: "rgba(251, 247, 240, 0.5)" }}
-        >
+        {/* Legal bar */}
+        <div className="pt-6 border-t border-stone-200 flex flex-col md:flex-row justify-between gap-3 text-xs text-taupe-500">
           <p>© 2026 SC AERA SCENTT SRL · Toate drepturile rezervate.</p>
           <div className="flex gap-5">
             <Link href="/politica-confidentialitate" className={mutedLinkClass}>
@@ -120,6 +148,23 @@ export function Footer() {
           </div>
         </div>
       </div>
+
+      {/* Big decorative wordmark — ivory pe ivory, subtle accent */}
+      <div
+        aria-hidden="true"
+        className="relative w-full mt-4 md:mt-8 select-none pointer-events-none"
+        style={{ lineHeight: 0 }}
+      >
+        <Image
+          src="/logo/aera-footer.png"
+          alt=""
+          width={1428}
+          height={454}
+          className="w-full h-auto"
+          style={{ opacity: 0.55 }}
+          priority={false}
+        />
+      </div>
     </footer>
-  );
+  )
 }
