@@ -51,6 +51,7 @@ export function BrandShowcase() {
           {brands.map((brand, i) => (
             <motion.div
               key={brand.name}
+              className="h-full"
               initial={{ opacity: 0, y: shouldReduce ? 0 : 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-64px' }}
@@ -62,24 +63,24 @@ export function BrandShowcase() {
             >
               <Link
                 href={brand.href}
-                className="group block bg-ivory-50 border border-stone-200 rounded-md p-8 lg:p-10 transition-transform duration-200 ease-out hover:-translate-y-1"
+                className="group flex flex-col h-full bg-ivory-50 border border-stone-200 rounded-md p-8 lg:p-10 transition-transform duration-200 ease-out hover:-translate-y-1"
                 style={{ borderWidth: '0.5px' }}
               >
-                <div className="mb-6 h-12 flex items-center overflow-hidden">
+                <div className="mb-6 h-16 flex items-center overflow-hidden">
                   {brand.isPng ? (
                     <Image
                       src={brand.logo}
                       alt={brand.alt}
                       width={400}
                       height={400}
-                      className={`${brand.logoClassName} object-contain transition-transform duration-200 ease-out group-hover:scale-[1.03]`}
+                      className={`${brand.logoClassName} max-h-12 w-auto object-contain transition-transform duration-200 ease-out group-hover:scale-[1.03]`}
                     />
                   ) : (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={brand.logo}
                       alt={brand.alt}
-                      className={`${brand.logoClassName} object-contain transition-transform duration-200 ease-out group-hover:scale-[1.03]`}
+                      className={`${brand.logoClassName} max-h-12 w-auto object-contain transition-transform duration-200 ease-out group-hover:scale-[1.03]`}
                     />
                   )}
                 </div>
@@ -88,11 +89,11 @@ export function BrandShowcase() {
 
                 <h3 className="card-title mb-3">{brand.name}</h3>
 
-                <p className="body text-cocoa-700 mb-6">
+                <p className="body text-cocoa-700 flex-1">
                   {brand.description}
                 </p>
 
-                <span className="text-cocoa-700 font-medium tracking-wide group-hover:text-cocoa-900 transition-colors duration-200 border-b border-cocoa-700/30 group-hover:border-cocoa-900 pb-0.5">
+                <span className="mt-6 text-cocoa-700 font-medium tracking-wide group-hover:text-cocoa-900 transition-colors duration-200 border-b border-cocoa-700/30 group-hover:border-cocoa-900 pb-0.5 self-start">
                   Vezi colecția &rarr;
                 </span>
               </Link>

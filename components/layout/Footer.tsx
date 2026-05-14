@@ -7,7 +7,7 @@ export function Footer() {
       <div className="mx-auto max-w-7xl px-6 lg:px-12 py-16">
         <div className="grid md:grid-cols-4 gap-12 mb-12">
           <div className="md:col-span-2">
-            <Logo variant="ivory" className="h-7 w-auto mb-6" />
+            <Logo variant="ivory" className="h-14 md:h-20 w-auto mb-8" />
             <p
               className="max-w-sm"
               style={{

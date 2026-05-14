@@ -10,9 +10,9 @@ const navLinks = [
 export function Header() {
   return (
     <header className="sticky top-0 z-40 bg-cream-100/80 backdrop-blur-sm border-b border-stone-200/60">
-      <div className="mx-auto max-w-7xl px-6 lg:px-12 h-16 flex items-center justify-between">
+      <div className="mx-auto max-w-7xl px-6 lg:px-12 h-20 md:h-24 flex items-center justify-between">
         <Link href="/" aria-label="AERA Beauty — pagina principală" className="block">
-          <Logo className="h-6 w-auto" />
+          <Logo className="h-12 md:h-16 w-auto" />
         </Link>
 
         <nav className="hidden md:flex items-center gap-10">
