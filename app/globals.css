@@ -1,0 +1,138 @@
+@import "tailwindcss";
+
+@theme inline {
+  /* Paleta AERA Beauty */
+  --color-cocoa-900: #3D2F25;
+  --color-cocoa-700: #5B4638;
+  --color-taupe-500: #8C7567;
+  --color-stone-200: #E8DFD3;
+  --color-cream-100: #F5EFE7;
+  --color-ivory-50: #FBF7F0;
+
+  /* Accente per brand */
+  --color-aqua-teal: #2C5F6F;
+  --color-oliere-olive: #6B6F47;
+  --color-redefine-matcha: #7A8B5C;
+  --color-redefine-matcha-dark: #5D6B44;
+
+  /* Fonts (variable injectate prin next/font) */
+  --font-display: var(--font-bodoni-moda), Georgia, serif;
+  --font-display-clinical: var(--font-noto-serif-display), Georgia, serif;
+  --font-sans: var(--font-inter), system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+/* Reset și baseline */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background: var(--color-cream-100);
+  color: var(--color-cocoa-700);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.65;
+}
+
+/* Tipografie editorială cu clamp() — scară fluidă responsive */
+.hero-title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2.375rem, 6.5vw, 6rem);   /* 38px → 96px */
+  line-height: 1.0;
+  letter-spacing: -0.04em;
+  color: var(--color-cocoa-900);
+}
+
+.page-title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2rem, 5vw, 4.5rem);       /* 32px → 72px */
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  color: var(--color-cocoa-900);
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.625rem, 3.5vw, 3.25rem); /* 26px → 52px */
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  color: var(--color-cocoa-900);
+}
+
+.product-block-title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.375rem, 2.4vw, 2.25rem); /* 22px → 36px */
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--color-cocoa-900);
+}
+
+.card-title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.125rem, 1.5vw, 1.5rem);  /* 18px → 24px */
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--color-cocoa-900);
+}
+
+.body-large {
+  font-family: var(--font-sans);
+  font-size: clamp(1.125rem, 1.4vw, 1.5rem);  /* 18px → 24px */
+  line-height: 1.55;
+  color: var(--color-cocoa-700);
+}
+
+.body {
+  font-family: var(--font-sans);
+  font-size: clamp(1rem, 1.15vw, 1.125rem);   /* 16px → 18px */
+  line-height: 1.6;
+  color: var(--color-cocoa-700);
+}
+
+.eyebrow {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: clamp(0.6875rem, 0.85vw, 0.8125rem); /* 11px → 13px */
+  line-height: 1.2;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-taupe-500);
+}
+
+.button-label {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: clamp(0.875rem, 1vw, 1rem);     /* 14px → 16px */
+  line-height: 1.15;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+}
+
+/* Selecția textului */
+::selection {
+  background: var(--color-cocoa-700);
+  color: var(--color-ivory-50);
+}
+
+/* Focus visible pentru accesibilitate */
+*:focus-visible {
+  outline: 2px solid var(--color-cocoa-700);
+  outline-offset: 2px;
+}
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
