@@ -18,7 +18,7 @@ const blocks = [
 function Separator() {
   return (
     <div
-      className="mx-auto text-center text-taupe-500/50 select-none"
+      className="text-taupe-500/50 select-none"
       aria-hidden="true"
       style={{ letterSpacing: '0.3em', fontSize: '14px' }}
     >
@@ -30,18 +30,20 @@ function Separator() {
 export function Manifesto() {
   return (
     <article className="border-t border-stone-200">
-      <div className="mx-auto max-w-3xl px-6 lg:px-12 py-24 md:py-32 flex flex-col gap-12 md:gap-16">
-        {blocks.map((block, i) => (
-          <FadeIn key={i} delay={i * 0.08}>
-            {i > 0 && <Separator />}
-            <section className={i > 0 ? 'mt-12 md:mt-16' : undefined}>
-              {block.eyebrow && (
-                <p className="eyebrow mb-4">{block.eyebrow}</p>
-              )}
-              <p className="body-large text-cocoa-700">{block.text}</p>
-            </section>
-          </FadeIn>
-        ))}
+      <div className="mx-auto max-w-7xl px-6 lg:px-12 py-24 md:py-32">
+        <div className="max-w-3xl flex flex-col gap-12 md:gap-16">
+          {blocks.map((block, i) => (
+            <FadeIn key={i} delay={i * 0.08}>
+              {i > 0 && <Separator />}
+              <section className={i > 0 ? 'mt-12 md:mt-16' : undefined}>
+                {block.eyebrow && (
+                  <p className="eyebrow mb-4">{block.eyebrow}</p>
+                )}
+                <p className="body-large text-cocoa-700">{block.text}</p>
+              </section>
+            </FadeIn>
+          ))}
+        </div>
       </div>
     </article>
   )
