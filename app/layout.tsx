@@ -5,19 +5,19 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL("https://aerabeauty.ro"),
   title: {
-    default: "AERA Beauty — Frumusețe curată, centrată pe piele",
+    default: "AERA Beauty — For the love of Beauty",
     template: "%s · AERA Beauty",
   },
   description:
-    "Trei branduri premium aduse în România: Aqua Mineral, Oliere Paris și Redefine Matcha. Skincare cu minerale din Marea Moartă și haircare profesional cu uleiuri naturale.",
+    "Branduri premium de skincare și haircare, atent selectate de AERA Beauty: Aqua Mineral, Oliere Paris și Redefine Matcha. Reprezentate cu grijă în România.",
   openGraph: {
     type: "website",
     locale: "ro_RO",
     url: "https://aerabeauty.ro",
     siteName: "AERA Beauty",
-    title: "AERA Beauty — Frumusețe curată, centrată pe piele",
+    title: "AERA Beauty — For the love of Beauty",
     description:
-      "Trei branduri premium aduse în România: Aqua Mineral, Oliere Paris și Redefine Matcha.",
+      "Branduri premium de skincare și haircare, atent selectate de AERA Beauty: Aqua Mineral, Oliere Paris și Redefine Matcha.",
   },
 };
 

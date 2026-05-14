@@ -8,8 +8,16 @@ export function Footer() {
         <div className="grid md:grid-cols-4 gap-12 mb-12">
           <div className="md:col-span-2">
             <Logo variant="ivory" className="h-7 w-auto mb-6" />
-            <p className="body max-w-sm text-ivory-50/70" style={{ color: "rgba(251, 247, 240, 0.7)" }}>
-              Frumusețe curată, reprezentată în România.
+            <p
+              className="max-w-sm"
+              style={{
+                fontFamily: "var(--font-bodoni-moda), Georgia, serif",
+                fontSize: "20px",
+                lineHeight: 1.3,
+                color: "rgba(251, 247, 240, 0.85)",
+              }}
+            >
+              For the love of <span style={{ fontStyle: "italic" }}>Beauty.</span>
             </p>
           </div>
 
