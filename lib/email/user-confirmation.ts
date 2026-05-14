@@ -9,15 +9,15 @@ export function buildUserConfirmationHtml(name: string): string {
   return `<!DOCTYPE html>
 <html lang="ro">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background:#F5EFE7;font-family:Helvetica,Arial,sans-serif;color:#5B4638;">
+<body style="margin:0;padding:0;background:#F5EFE7;font-family:Tahoma,Verdana,Arial,sans-serif;color:#5B4638;">
 <table width="100%" cellpadding="0" cellspacing="0" style="background:#F5EFE7;padding:32px 16px;">
 <tr><td align="center">
 <table width="600" cellpadding="0" cellspacing="0" style="background:#FBF7F0;border-radius:12px;overflow:hidden;max-width:600px;width:100%;">
 
-  <!-- Header with logo area -->
-  <tr><td style="padding:32px 32px 16px;text-align:center;">
-    <p style="margin:0;font-family:Georgia,serif;font-size:24px;color:#3D2F25;letter-spacing:-0.02em;">AERA Beauty</p>
-    <p style="margin:4px 0 0;font-family:Georgia,serif;font-size:15px;font-style:italic;color:#8C7567;">For the love of Beauty.</p>
+  <!-- Header with logo -->
+  <tr><td style="padding:36px 32px 20px;text-align:center;">
+    <img src="https://aerabeauty.ro/logo/aera-beauty-mocha.png" alt="AERA Beauty" width="180" style="display:inline-block;width:180px;height:auto;border:0;outline:none;text-decoration:none;">
+    <p style="margin:14px 0 0;font-family:Georgia,serif;font-size:15px;font-style:italic;color:#8C7567;">For the love of Beauty.</p>
   </td></tr>
 
   <!-- Divider -->
@@ -35,7 +35,7 @@ export function buildUserConfirmationHtml(name: string): string {
     <!-- CTA -->
     <table cellpadding="0" cellspacing="0" style="margin:0 auto;">
       <tr><td>
-        <a href="https://aerabeauty.ro/produse" style="display:inline-block;padding:14px 32px;background:#5B4638;color:#FBF7F0;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:0.10em;text-decoration:none;border-radius:14px;">Descoperă colecțiile</a>
+        <a href="https://aerabeauty.ro/produse" style="display:inline-block;padding:14px 32px;background:#5B4638;color:#FBF7F0;font-family:Tahoma,Verdana,Arial,sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:0.10em;text-decoration:none;border-radius:14px;">Descoper&#258; colec&#538;iile</a>
       </td></tr>
     </table>
   </td></tr>

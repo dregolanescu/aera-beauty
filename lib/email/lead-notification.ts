@@ -36,13 +36,14 @@ export function buildLeadNotificationHtml(data: LeadData): string {
   return `<!DOCTYPE html>
 <html lang="ro">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background:#F5EFE7;font-family:Arial,Helvetica,sans-serif;color:#5B4638;">
+<body style="margin:0;padding:0;background:#F5EFE7;font-family:Tahoma,Verdana,Arial,sans-serif;color:#5B4638;">
 <table width="100%" cellpadding="0" cellspacing="0" style="background:#F5EFE7;padding:32px 16px;">
 <tr><td align="center">
 <table width="600" cellpadding="0" cellspacing="0" style="background:#FBF7F0;border-radius:12px;overflow:hidden;max-width:600px;width:100%;">
 
   <!-- Header -->
   <tr><td style="padding:28px 32px 20px;border-bottom:1px solid #E8DFD3;">
+    <img src="https://aerabeauty.ro/logo/aera-beauty-mocha.png" alt="AERA Beauty" width="140" style="display:block;width:140px;height:auto;margin:0 0 16px;border:0;outline:none;text-decoration:none;">
     <p style="margin:0 0 4px;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.14em;color:#8C7567;">Lead nou</p>
     <p style="margin:0;font-family:Georgia,serif;font-size:22px;color:#3D2F25;">${data.name}</p>
   </td></tr>
@@ -93,10 +94,10 @@ export function buildLeadNotificationHtml(data: LeadData): string {
     <table cellpadding="0" cellspacing="0">
       <tr>
         <td style="padding-right:12px;">
-          <a href="mailto:${data.email}?subject=${encodeURIComponent(`Re: precomanda ta AERA — ${brandLabel}`)}" style="display:inline-block;padding:10px 20px;background:#5B4638;color:#FBF7F0;font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;text-decoration:none;border-radius:6px;">R&#258;spunde</a>
+          <a href="mailto:${data.email}?subject=${encodeURIComponent(`Re: precomanda ta AERA — ${brandLabel}`)}" style="display:inline-block;padding:10px 20px;background:#5B4638;color:#FBF7F0;font-family:Tahoma,Verdana,Arial,sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;text-decoration:none;border-radius:6px;">R&#258;spunde</a>
         </td>
         ${waLink ? `<td style="padding-right:12px;">
-          <a href="${waLink}" style="display:inline-block;padding:10px 20px;background:transparent;color:#5B4638;font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;text-decoration:none;border-radius:6px;border:1px solid #5B4638;">WhatsApp</a>
+          <a href="${waLink}" style="display:inline-block;padding:10px 20px;background:transparent;color:#5B4638;font-family:Tahoma,Verdana,Arial,sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;text-decoration:none;border-radius:6px;border:1px solid #5B4638;">WhatsApp</a>
         </td>` : ''}
       </tr>
     </table>
