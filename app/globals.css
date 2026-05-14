@@ -177,12 +177,12 @@ body {
   pointer-events: none;
   background: conic-gradient(
     from var(--aera-angle),
-    rgba(255, 245, 220, 0.15) 0deg,
-    rgba(255, 245, 220, 0.15) 200deg,
-    rgba(255, 245, 220, 0.75) 240deg,
-    rgba(255, 255, 255, 1) 280deg,
-    rgba(255, 245, 220, 0.75) 320deg,
-    rgba(255, 245, 220, 0.15) 360deg
+    var(--color-cocoa-700) 0deg,
+    var(--color-cocoa-700) 200deg,
+    rgba(200, 180, 160, 1) 240deg,
+    rgba(255, 250, 240, 1) 280deg,
+    rgba(200, 180, 160, 1) 320deg,
+    var(--color-cocoa-700) 360deg
   );
   animation: aera-cta-glow-spin 4s linear infinite;
 }
