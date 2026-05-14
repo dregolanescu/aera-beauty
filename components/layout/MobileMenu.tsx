@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react'
 import { X } from 'lucide-react'
 import { Logo } from './Logo'
-import { Button } from '@/components/ui/Button'
+import { PrecomandaCTA } from '@/components/precomanda/PrecomandaCTA'
 
 const navLinks = [
   { href: '/despre', label: 'Despre' },
@@ -152,9 +152,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
 
             {/* Bottom: CTA + contact */}
             <div className="px-6 pb-10">
-              <Button href="#precomanda" variant="primary" className="w-full">
-                Precomandă
-              </Button>
+              <PrecomandaCTA className="w-full" onAfterOpen={onClose} />
               <div className="mt-6 flex flex-col gap-2 text-sm text-taupe-500">
                 <a
                   href="mailto:office@aerabeauty.ro"

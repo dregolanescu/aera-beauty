@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/Button";
+import { PrecomandaCTA } from "@/components/precomanda/PrecomandaCTA";
 import { ShaderBackground } from "./ShaderBackground";
 
 export function Hero() {
@@ -30,9 +31,7 @@ export function Hero() {
           </p>
 
           <div className="mt-14 md:mt-16 flex flex-col sm:flex-row gap-4">
-            <Button href="#precomanda" variant="primary">
-              Precomandă
-            </Button>
+            <PrecomandaCTA />
             <Button href="#branduri" variant="ghost">
               Descoperă brandurile
             </Button>

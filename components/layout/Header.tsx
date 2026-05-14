@@ -4,7 +4,7 @@ import { useState, useRef } from 'react'
 import Link from 'next/link'
 import { Menu } from 'lucide-react'
 import { Logo } from './Logo'
-import { Button } from '@/components/ui/Button'
+import { PrecomandaCTA } from '@/components/precomanda/PrecomandaCTA'
 import { MobileMenu } from './MobileMenu'
 
 const navLinks = [
@@ -56,9 +56,7 @@ export function Header() {
           <div className="flex items-center gap-4">
             {/* Desktop CTA */}
             <div className="hidden md:block">
-              <Button href="#precomanda" variant="primary" size="sm">
-                Precomandă
-              </Button>
+              <PrecomandaCTA size="sm" />
             </div>
 
             {/* Mobile burger */}

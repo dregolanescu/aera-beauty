@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { bodoniModa, notoSerifDisplay, inter } from "./fonts";
+import { PrecomandaProvider } from "@/components/precomanda/PrecomandaContext";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -32,7 +34,9 @@ export default function RootLayout({
       className={`${bodoniModa.variable} ${notoSerifDisplay.variable} ${inter.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-cream-100 text-cocoa-700">
-        {children}
+        <Suspense>
+          <PrecomandaProvider>{children}</PrecomandaProvider>
+        </Suspense>
       </body>
     </html>
   );
