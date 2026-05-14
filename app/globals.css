@@ -208,6 +208,14 @@ body {
   background-color: var(--color-cocoa-900);
 }
 
+/* Matcha accent variant (Redefine page only) */
+.aera-cta-wrap[data-accent="matcha"] .aera-cta-face {
+  background-color: var(--color-redefine-matcha);
+}
+.aera-cta-wrap[data-accent="matcha"] .aera-cta-face:hover {
+  background-color: var(--color-redefine-matcha-dark);
+}
+
 .aera-cta-wrap:hover {
   transform: translateY(-2px);
   box-shadow:

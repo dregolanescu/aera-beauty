@@ -49,7 +49,11 @@ export function Header() {
                   textTransform: 'none',
                   fontSize: '14px',
                 }}
-                aria-current={pathname === link.href ? 'page' : undefined}
+                aria-current={
+                  pathname === link.href || pathname.startsWith(link.href + '/')
+                    ? 'page'
+                    : undefined
+                }
               >
                 {link.label}
               </Link>
