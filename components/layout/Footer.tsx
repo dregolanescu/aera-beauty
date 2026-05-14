@@ -6,17 +6,17 @@ const mutedLinkClass = "hover:text-ivory-50/70 transition-colors";
 
 export function Footer() {
   return (
-    <footer className="mt-32 bg-cocoa-900 text-ivory-50">
-      <div className="mx-auto max-w-7xl px-6 lg:px-12 py-16">
-        <div className="grid md:grid-cols-12 gap-12 mb-12">
+    <footer className="mt-20 bg-cocoa-900 text-ivory-50">
+      <div className="mx-auto max-w-7xl px-6 lg:px-12 py-10 md:py-12">
+        <div className="grid md:grid-cols-12 gap-8 mb-8">
           {/* Brand block */}
           <div className="md:col-span-4">
-            <Logo variant="ivory" className="h-14 md:h-20 w-auto mb-8" />
+            <Logo variant="ivory" className="h-10 md:h-14 w-auto mb-4" />
             <p
               className="max-w-sm"
               style={{
                 fontFamily: "var(--font-bodoni-moda), Georgia, serif",
-                fontSize: "20px",
+                fontSize: "18px",
                 lineHeight: 1.3,
                 color: "rgba(251, 247, 240, 0.85)",
               }}
@@ -28,10 +28,10 @@ export function Footer() {
 
           {/* Navigație */}
           <div className="md:col-span-2">
-            <h3 className="eyebrow mb-4" style={eyebrowStyle}>
+            <h3 className="eyebrow mb-3" style={eyebrowStyle}>
               Navigație
             </h3>
-            <ul className="space-y-2">
+            <ul className="space-y-1.5 text-sm">
               <li>
                 <Link href="/despre" className={mutedLinkClass}>
                   Despre
@@ -52,10 +52,10 @@ export function Footer() {
 
           {/* Contact */}
           <div className="md:col-span-3">
-            <h3 className="eyebrow mb-4" style={eyebrowStyle}>
+            <h3 className="eyebrow mb-3" style={eyebrowStyle}>
               Contact
             </h3>
-            <ul className="space-y-2">
+            <ul className="space-y-1.5 text-sm">
               <li>
                 <a
                   href="mailto:office@aerabeauty.ro"
@@ -84,38 +84,30 @@ export function Footer() {
 
           {/* Firmă */}
           <div className="md:col-span-3">
-            <h3 className="eyebrow mb-4" style={eyebrowStyle}>
+            <h3 className="eyebrow mb-3" style={eyebrowStyle}>
               Firmă
             </h3>
             <address
-              className="not-italic text-sm leading-relaxed"
+              className="not-italic text-sm leading-snug"
               style={{ color: "rgba(251, 247, 240, 0.7)" }}
             >
-              SC AERA SCENTT SRL
+              SC AERA SCENTT SRL · Importator unic
               <br />
-              Importator unic în România
-              <br />
-              <br />
-              Str. Panait Cerna nr. 7
-              <br />
-              bl. M44, sc. 3, et. 7, ap. 93
+              Str. Panait Cerna 7, bl. M44, sc. 3, et. 7, ap. 93
               <br />
               Sector 3, București
               <br />
-              <br />
-              CUI: RO 54486857
-              <br />
-              Reg. Com.: J2026024816005
+              CUI RO 54486857 · Reg. Com. J2026024816005
             </address>
           </div>
         </div>
 
         <div
-          className="pt-8 border-t border-ivory-50/10 flex flex-col md:flex-row justify-between gap-4 text-sm"
+          className="pt-6 border-t border-ivory-50/10 flex flex-col md:flex-row justify-between gap-3 text-xs"
           style={{ color: "rgba(251, 247, 240, 0.5)" }}
         >
           <p>© 2026 SC AERA SCENTT SRL · Toate drepturile rezervate.</p>
-          <div className="flex gap-6">
+          <div className="flex gap-5">
             <Link href="/politica-confidentialitate" className={mutedLinkClass}>
               Politica de confidențialitate
             </Link>
