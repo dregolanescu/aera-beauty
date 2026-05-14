@@ -34,7 +34,7 @@ const fragmentShader = `
     // cream-100 base + warm cocoa-tinted glow
     vec3 cream = vec3(0.961, 0.937, 0.906);
     vec3 warmGlow = rings * vec3(0.35, 0.28, 0.22);
-    gl_FragColor = vec4(cream + warmGlow * 1.2, 1.0);
+    gl_FragColor = vec4(cream + warmGlow, 1.0);
   }
 `
 
