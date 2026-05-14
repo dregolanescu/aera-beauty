@@ -4,19 +4,16 @@ export function Hero() {
   return (
     <section className="relative">
       <div className="mx-auto max-w-7xl px-6 lg:px-12 pt-24 pb-32 md:pt-32 md:pb-40">
-        <div className="max-w-4xl">
+        <div className="max-w-5xl">
           <p className="eyebrow mb-8">AERA Beauty</p>
 
-          <h1 className="hero-title">
-            For the love of
-            <br />
-            <span style={{ fontStyle: "italic" }}>Beauty.</span>
-          </h1>
+          <h1 className="hero-title">For the love of Beauty</h1>
 
-          <p className="page-title mt-4 max-w-3xl">
-            Frumusețe curată,
-            <br />
-            <span style={{ fontStyle: "italic" }}>aleasă cu discernământ.</span>
+          <p
+            className="page-title mt-4 max-w-3xl"
+            style={{ fontStyle: "italic" }}
+          >
+            Frumusețe curată, aleasă cu discernământ
           </p>
 
           <p
