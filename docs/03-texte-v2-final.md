@@ -79,7 +79,7 @@ CTA per card: `Vezi colecția →`
 > Ai o întrebare? Suntem aici.
 
 ```
-Email:     hello@aerabeauty.ro    [placeholder, de confirmat]
+Email:     office@aerabeauty.ro    [placeholder, de confirmat]
 Telefon:   +40 ___ ___ ___        [de completat]
 WhatsApp:  +40 ___ ___ ___        [opțional]
 Sediu:     SC AERA SCENTT SRL · [adresă] · CUI: [cod]
@@ -123,7 +123,7 @@ Sediu:     SC AERA SCENTT SRL · [adresă] · CUI: [cod]
 **Link în confirmare:** `Vezi colecțiile →`
 
 **Mesaj eroare:**
-> Ceva nu a mers. Te rugăm să reîncerci într-un minut sau să ne scrii direct la hello@aerabeauty.ro.
+> Ceva nu a mers. Te rugăm să reîncerci într-un minut sau să ne scrii direct la office@aerabeauty.ro.
 
 ### 1.8 Footer
 
@@ -452,7 +452,7 @@ Tab 3: `Redefine Matcha`
 
 **Headline:** *Pentru orice altă întrebare:*
 
-> Scrie-ne la **hello@aerabeauty.ro** sau la **+40 ___ ___ ___**. Îți răspundem cu drag.
+> Scrie-ne la **office@aerabeauty.ro** sau la **+40 ___ ___ ___**. Îți răspundem cu drag.
 
 ---
 

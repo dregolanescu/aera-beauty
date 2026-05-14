@@ -78,7 +78,7 @@ CTA per card: `Vezi colecția →`
 **Headline:** *Aici ne găsești.*
 
 ```
-Email:     hello@aerabeauty.ro    [placeholder, de confirmat cu clientul]
+Email:     office@aerabeauty.ro    [placeholder, de confirmat cu clientul]
 Telefon:   +40 ___ ___ ___        [de completat]
 WhatsApp:  +40 ___ ___ ___        [opțional, același]
 Sediu:     SC AERA SCENTT SRL · [adresă] · CUI: [cod]
@@ -121,7 +121,7 @@ Social: Instagram · Facebook · TikTok (iconițe linie)
 
 **Mesaj de eroare generic:**
 
-> Ceva nu a mers. Reîncearcă într-un minut, sau scrie-ne direct la hello@aerabeauty.ro.
+> Ceva nu a mers. Reîncearcă într-un minut, sau scrie-ne direct la office@aerabeauty.ro.
 
 ### 1.8 Footer
 
@@ -446,7 +446,7 @@ Fiecare deschide formularul B2B specific (preluat din cele trei JPEG-uri Cosmobe
 
 **Headline:** *Pentru orice altă întrebare:*
 
-> Scrie-ne la **hello@aerabeauty.ro** sau la **+40 ___ ___ ___**. Te ascultăm.
+> Scrie-ne la **office@aerabeauty.ro** sau la **+40 ___ ___ ___**. Te ascultăm.
 
 ---
 

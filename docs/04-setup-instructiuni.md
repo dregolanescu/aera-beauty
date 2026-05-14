@@ -116,6 +116,6 @@ După ce funcționează asta, mergi pe rând: brand pages, formular precomandă,
 RESEND_API_KEY=
 SUPABASE_URL=
 SUPABASE_ANON_KEY=
-NOTIFY_EMAIL=hello@aerabeauty.ro
+NOTIFY_EMAIL=office@aerabeauty.ro
 NEXT_PUBLIC_SITE_URL=https://aerabeauty.ro
 ```

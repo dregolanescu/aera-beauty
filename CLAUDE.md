@@ -5,7 +5,7 @@ Site de prezentare premium pentru **AERA Beauty** (SC AERA SCENTT SRL), reprezen
 **Status v1:** site de prezentare, fără e-commerce. Magazinul online se adaugă în ~2-3 săptămâni după lansarea v1 — arhitectura trebuie să-l acomodeze natural.
 
 **Limbă:** doar română, cu diacritice complete.
-**Domeniu:** `aerabeauty.ro` (cumpărat). Toate URL-urile canonice și OG URLs trebuie să folosească `https://aerabeauty.ro`. Email-uri funcționale pe acest domeniu (`hello@aerabeauty.ro`, `gdpr@aerabeauty.ro` — TBD configurare).
+**Domeniu:** `aerabeauty.ro` (cumpărat). Toate URL-urile canonice și OG URLs trebuie să folosească `https://aerabeauty.ro`. Email-uri funcționale pe acest domeniu (`office@aerabeauty.ro`, `gdpr@aerabeauty.ro` — TBD configurare).
 
 **Documente de referință** (toate în root-ul repo-ului):
 - `docs/01-sitemap.md` — arhitectura paginilor și sectionarea
