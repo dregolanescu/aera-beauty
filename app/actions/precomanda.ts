@@ -2,6 +2,14 @@
 
 import { z } from 'zod'
 import { headers } from 'next/headers'
+import { createHash } from 'crypto'
+import { Resend } from 'resend'
+import { getSupabase } from '@/lib/supabase'
+import {
+  buildLeadNotificationHtml,
+  buildLeadNotificationSubject,
+} from '@/lib/email/lead-notification'
+import { buildUserConfirmationHtml } from '@/lib/email/user-confirmation'
 
 const GDPR_CONSENT_VERSION = 'v1-2026-05'
 
@@ -20,7 +28,11 @@ const schema = z.object({
     message: 'Selectează un brand',
   }),
   product: z.string().optional().default(''),
-  message: z.string().max(500, 'Mesajul poate avea maximum 500 de caractere').optional().default(''),
+  message: z
+    .string()
+    .max(500, 'Mesajul poate avea maximum 500 de caractere')
+    .optional()
+    .default(''),
   gdprConsent: z.literal('on', {
     message: 'Acordul GDPR este obligatoriu',
   }),
@@ -31,9 +43,15 @@ export type PrecomandaResult =
   | { ok: true }
   | { ok: false; error: string; fieldErrors?: Record<string, string> }
 
+function hashIp(ip: string): string {
+  const salt = process.env.GDPR_IP_SALT ?? 'aera-dev-salt'
+  return createHash('sha256').update(`${salt}:${ip}`).digest('hex')
+}
+
 export async function submitPrecomanda(
   formData: FormData,
 ): Promise<PrecomandaResult> {
+  // 1. Validate
   const raw = Object.fromEntries(formData.entries())
   const parsed = schema.safeParse(raw)
 
@@ -45,33 +63,125 @@ export async function submitPrecomanda(
         fieldErrors[String(key)] = issue.message
       }
     }
-    return { ok: false, error: 'Te rugăm să completezi câmpurile obligatorii.', fieldErrors }
+    return {
+      ok: false,
+      error: 'Te rugăm să completezi câmpurile obligatorii.',
+      fieldErrors,
+    }
   }
 
-  // Audit log structure (for future Supabase insert)
+  const d = parsed.data
   const hdrs = await headers()
-  const auditLog = {
-    timestamp: new Date().toISOString(),
-    ip: hdrs.get('x-forwarded-for') ?? hdrs.get('x-real-ip') ?? 'unknown',
-    userAgent: hdrs.get('user-agent') ?? 'unknown',
-    gdprConsentVersion: GDPR_CONSENT_VERSION,
-    marketingOptIn: parsed.data.marketingOptIn === 'on',
-    payload: {
-      name: parsed.data.name,
-      email: parsed.data.email,
-      phone: parsed.data.phone,
-      city: parsed.data.city,
-      brand: parsed.data.brand,
-      product: parsed.data.product,
-      message: parsed.data.message,
-    },
+  const rawIp =
+    hdrs.get('x-forwarded-for')?.split(',')[0]?.trim() ??
+    hdrs.get('x-real-ip') ??
+    'unknown'
+  const ipHashed = hashIp(rawIp)
+  const userAgent = hdrs.get('user-agent') ?? 'unknown'
+  const timestamp = new Date().toISOString()
+  const marketingOptIn = d.marketingOptIn === 'on'
+
+  // 2. Insert into Supabase (graceful if not configured)
+  let leadId: string | undefined
+  const supabase = getSupabase()
+
+  if (supabase) {
+    const { data: row, error: dbError } = await supabase
+      .from('precomenzi')
+      .insert({
+        name: d.name,
+        email: d.email,
+        phone: d.phone || null,
+        city: d.city || null,
+        brand: d.brand,
+        product: d.product || null,
+        message: d.message || null,
+        marketing_optin: marketingOptIn,
+        gdpr_accepted_at: timestamp,
+        gdpr_text_version: GDPR_CONSENT_VERSION,
+        ip_hashed: ipHashed,
+        user_agent: userAgent,
+        status: 'new',
+      })
+      .select('id')
+      .single()
+
+    if (dbError) {
+      console.error('[precomanda] Supabase insert error:', dbError)
+      // Don't fail the user — log and continue
+    } else {
+      leadId = row?.id
+    }
+  } else {
+    console.log(
+      '[precomanda] Supabase not configured — logging audit data:',
+      JSON.stringify(
+        {
+          timestamp,
+          ipHashed,
+          userAgent,
+          gdprVersion: GDPR_CONSENT_VERSION,
+          marketingOptIn,
+          payload: {
+            name: d.name,
+            email: d.email,
+            phone: d.phone,
+            city: d.city,
+            brand: d.brand,
+            product: d.product,
+            message: d.message,
+          },
+        },
+        null,
+        2,
+      ),
+    )
   }
 
-  // TODO: Insert into Supabase table `precomenzi`
-  // TODO: Send notification email to office@aerabeauty.ro via Resend
-  // TODO: Send confirmation email to user
-  // TODO: If marketingOptIn, trigger double opt-in flow
-  console.log('[precomanda] Audit log:', JSON.stringify(auditLog, null, 2))
+  // 3. Send emails via Resend (graceful if not configured)
+  const resendKey = process.env.RESEND_API_KEY
+  if (resendKey) {
+    const resend = new Resend(resendKey)
+
+    // 3a. Notification to office
+    try {
+      await resend.emails.send({
+        from: 'AERA Beauty <noreply@aerabeauty.ro>',
+        to: 'office@aerabeauty.ro',
+        subject: buildLeadNotificationSubject(d.name, d.brand),
+        html: buildLeadNotificationHtml({
+          name: d.name,
+          email: d.email,
+          phone: d.phone,
+          city: d.city,
+          brand: d.brand,
+          product: d.product,
+          message: d.message,
+          marketingOptIn,
+          timestamp,
+          ipHashed,
+          gdprVersion: GDPR_CONSENT_VERSION,
+          leadId,
+        }),
+      })
+    } catch (err) {
+      console.error('[precomanda] Resend office email error:', err)
+    }
+
+    // 3b. Confirmation to user
+    try {
+      await resend.emails.send({
+        from: 'AERA Beauty <noreply@aerabeauty.ro>',
+        to: d.email,
+        subject: 'Am primit cererea ta · AERA Beauty',
+        html: buildUserConfirmationHtml(d.name),
+      })
+    } catch (err) {
+      console.error('[precomanda] Resend user email error:', err)
+    }
+  } else {
+    console.log('[precomanda] Resend not configured — skipping emails')
+  }
 
   return { ok: true }
 }
