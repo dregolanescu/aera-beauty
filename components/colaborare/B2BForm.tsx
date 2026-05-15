@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, type FormEvent } from 'react'
+import { useState, useRef, type FormEvent } from 'react'
 import Link from 'next/link'
 import {
   colaborareConfigs,
@@ -14,18 +14,29 @@ type Props = {
 }
 
 const ROW = 'grid sm:grid-cols-2 gap-4 mb-4'
-const ROW_FULL = 'grid grid-cols-1 gap-4 mb-4'
 
 const labelClass = 'block eyebrow mb-2'
-const inputClass =
-  'w-full px-4 py-3 bg-ivory-50 border border-stone-200 rounded-md text-cocoa-700 placeholder:text-taupe-500/70 focus:outline-none focus:border-cocoa-700 transition-colors text-base'
+const baseInput =
+  'w-full px-4 py-3 bg-ivory-50 border rounded-md text-cocoa-700 placeholder:text-taupe-500/70 focus:outline-none transition-colors text-base'
+const inputIdle = 'border-stone-200 focus:border-cocoa-700'
+const inputError = 'border-red-400 focus:border-red-500 bg-red-50/30'
 
 const optionCardBase =
   'flex items-start gap-3 px-4 py-3 border rounded-md cursor-pointer transition-all text-sm bg-ivory-50'
 const optionCardIdle = 'border-stone-200 text-cocoa-700 hover:border-cocoa-700/40'
 const optionCardActive = 'border-cocoa-700 bg-cocoa-700/[0.03] text-cocoa-900'
 
-const errorClass = 'text-xs text-red-700 mt-1'
+const errorClass = 'text-xs text-red-700 mt-2 flex items-center gap-1.5'
+const errorRingClass = 'rounded-md ring-2 ring-red-300 ring-offset-2 ring-offset-ivory-50 p-1 -m-1'
+
+function ErrorMsg({ children }: { children: React.ReactNode }) {
+  return (
+    <p className={errorClass}>
+      <span aria-hidden="true">⚠</span>
+      {children}
+    </p>
+  )
+}
 
 export function B2BForm({ brand }: Props) {
   const cfg: BrandColaborareConfig = colaborareConfigs[brand]
@@ -36,7 +47,9 @@ export function B2BForm({ brand }: Props) {
   const [serverError, setServerError] = useState('')
   const [messageLen, setMessageLen] = useState(0)
 
-  // State pentru disable logic
+  const formRef = useRef<HTMLFormElement>(null)
+
+  // State pentru disable + validare client-side ușoară
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [profile, setProfile] = useState('')
@@ -51,6 +64,20 @@ export function B2BForm({ brand }: Props) {
     gdpr &&
     status !== 'submitting'
 
+  function inputCls(field: string) {
+    return `${baseInput} ${fieldErrors[field] ? inputError : inputIdle}`
+  }
+
+  function clearFieldError(field: string) {
+    if (fieldErrors[field]) {
+      setFieldErrors((prev) => {
+        const next = { ...prev }
+        delete next[field]
+        return next
+      })
+    }
+  }
+
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (!canSubmit) return
@@ -64,7 +91,6 @@ export function B2BForm({ brand }: Props) {
 
     if (result.ok) {
       setStatus('success')
-      // Reset campuri afișate
       setName('')
       setEmail('')
       setProfile('')
@@ -73,8 +99,22 @@ export function B2BForm({ brand }: Props) {
       setMessageLen(0)
     } else {
       setStatus('error')
-      setFieldErrors(result.fieldErrors ?? {})
+      const errs = result.fieldErrors ?? {}
+      setFieldErrors(errs)
       setServerError(result.error)
+
+      // Scroll smooth la primul câmp cu eroare
+      requestAnimationFrame(() => {
+        const firstField = Object.keys(errs)[0]
+        if (!firstField || !formRef.current) return
+        const el = formRef.current.querySelector(
+          `[name="${firstField}"], #${brand}-${firstField}`,
+        ) as HTMLElement | null
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          if (typeof el.focus === 'function') el.focus({ preventScroll: true })
+        }
+      })
     }
   }
 
@@ -100,11 +140,27 @@ export function B2BForm({ brand }: Props) {
     )
   }
 
+  const hasErrors = Object.keys(fieldErrors).length > 0
+
   return (
-    <form onSubmit={handleSubmit} noValidate>
+    <form ref={formRef} onSubmit={handleSubmit} noValidate>
       <input type="hidden" name="brand" value={brand} />
 
       <p className="body text-cocoa-700 mb-10 max-w-2xl">{cfg.taglineForm}</p>
+
+      {/* Banner sumar erori — apare doar dacă există fieldErrors */}
+      {hasErrors && (
+        <div
+          role="alert"
+          className="mb-8 px-5 py-4 bg-red-50 border border-red-200 rounded-md text-sm text-red-800 flex items-start gap-3"
+        >
+          <span aria-hidden="true" className="text-base leading-none mt-0.5">⚠</span>
+          <span>
+            <strong className="block mb-1">Te rugăm să verifici câmpurile evidențiate.</strong>
+            {serverError && <span className="block opacity-80">{serverError}</span>}
+          </span>
+        </div>
+      )}
 
       {/* 1. Date contact */}
       <section className="mb-10">
@@ -118,11 +174,12 @@ export function B2BForm({ brand }: Props) {
               type="text"
               required
               value={name}
-              onChange={(e) => setName(e.target.value)}
-              className={inputClass}
+              onChange={(e) => { setName(e.target.value); clearFieldError('name') }}
+              className={inputCls('name')}
               placeholder="Ex: Ana Popescu"
+              aria-invalid={!!fieldErrors.name}
             />
-            {fieldErrors.name && <p className={errorClass}>{fieldErrors.name}</p>}
+            {fieldErrors.name && <ErrorMsg>{fieldErrors.name}</ErrorMsg>}
           </div>
           <div>
             <label htmlFor={`${brand}-email`} className={labelClass}>Email *</label>
@@ -132,11 +189,12 @@ export function B2BForm({ brand }: Props) {
               type="email"
               required
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className={inputClass}
+              onChange={(e) => { setEmail(e.target.value); clearFieldError('email') }}
+              className={inputCls('email')}
               placeholder="nume@exemplu.ro"
+              aria-invalid={!!fieldErrors.email}
             />
-            {fieldErrors.email && <p className={errorClass}>{fieldErrors.email}</p>}
+            {fieldErrors.email && <ErrorMsg>{fieldErrors.email}</ErrorMsg>}
           </div>
         </div>
         <div className={ROW}>
@@ -146,7 +204,7 @@ export function B2BForm({ brand }: Props) {
               id={`${brand}-phone`}
               name="phone"
               type="tel"
-              className={inputClass}
+              className={inputCls('phone')}
               placeholder="+40 7XX XXX XXX"
             />
           </div>
@@ -156,7 +214,7 @@ export function B2BForm({ brand }: Props) {
               id={`${brand}-city`}
               name="city"
               type="text"
-              className={inputClass}
+              className={inputCls('city')}
               placeholder="București, Cluj, etc."
             />
           </div>
@@ -166,7 +224,9 @@ export function B2BForm({ brand }: Props) {
       {/* 2. Profil — radio */}
       <section className="mb-10">
         <h3 className="card-title mb-5">2. {cfg.profileLabel} *</h3>
-        <div className="grid sm:grid-cols-2 gap-3">
+        <div
+          className={`grid sm:grid-cols-2 gap-3 ${fieldErrors.profile ? errorRingClass : ''}`}
+        >
           {cfg.profile.map((opt) => (
             <label
               key={opt.value}
@@ -177,7 +237,7 @@ export function B2BForm({ brand }: Props) {
                 name="profile"
                 value={opt.value}
                 checked={profile === opt.value}
-                onChange={() => setProfile(opt.value)}
+                onChange={() => { setProfile(opt.value); clearFieldError('profile') }}
                 className="mt-0.5 accent-cocoa-700"
               />
               <span>{opt.label}</span>
@@ -190,11 +250,11 @@ export function B2BForm({ brand }: Props) {
               type="text"
               name="profileOther"
               placeholder="Specifică profilul tău"
-              className={inputClass}
+              className={inputCls('profileOther')}
             />
           </div>
         )}
-        {fieldErrors.profile && <p className={errorClass}>{fieldErrors.profile}</p>}
+        {fieldErrors.profile && <ErrorMsg>{fieldErrors.profile}</ErrorMsg>}
       </section>
 
       {/* 3. Interes — multi checkbox */}
@@ -268,16 +328,19 @@ export function B2BForm({ brand }: Props) {
           rows={4}
           maxLength={500}
           onChange={(e) => setMessageLen(e.target.value.length)}
-          className={inputClass}
+          className={inputCls('message')}
           placeholder="Ai un detaliu specific de adăugat?"
         />
         <p className="text-xs text-taupe-500 mt-1 text-right">{messageLen}/500</p>
+        {fieldErrors.message && <ErrorMsg>{fieldErrors.message}</ErrorMsg>}
       </section>
 
       {/* 7. Follow-up preferat */}
       <section className="mb-10">
         <h3 className="card-title mb-5">7. Cum preferi să te contactăm? *</h3>
-        <div className="grid sm:grid-cols-3 gap-3">
+        <div
+          className={`grid sm:grid-cols-3 gap-3 ${fieldErrors.followUp ? errorRingClass : ''}`}
+        >
           {followUpOptions.map((opt) => (
             <label
               key={opt.value}
@@ -288,24 +351,27 @@ export function B2BForm({ brand }: Props) {
                 name="followUp"
                 value={opt.value}
                 checked={followUp === opt.value}
-                onChange={() => setFollowUp(opt.value)}
+                onChange={() => { setFollowUp(opt.value); clearFieldError('followUp') }}
                 className="mt-0.5 accent-cocoa-700"
               />
               <span>{opt.label}</span>
             </label>
           ))}
         </div>
+        {fieldErrors.followUp && <ErrorMsg>{fieldErrors.followUp}</ErrorMsg>}
       </section>
 
       {/* 8. GDPR + marketing */}
       <section className="mb-10 space-y-4">
-        <label className="flex items-start gap-3 text-sm text-cocoa-700 cursor-pointer">
+        <label
+          className={`flex items-start gap-3 text-sm text-cocoa-700 cursor-pointer ${fieldErrors.gdprConsent ? 'p-3 -m-3 rounded-md ring-2 ring-red-300' : ''}`}
+        >
           <input
             type="checkbox"
             name="gdprConsent"
             value="on"
             checked={gdpr}
-            onChange={(e) => setGdpr(e.target.checked)}
+            onChange={(e) => { setGdpr(e.target.checked); clearFieldError('gdprConsent') }}
             required
             className="mt-1 accent-cocoa-700"
           />
@@ -317,7 +383,7 @@ export function B2BForm({ brand }: Props) {
             . *
           </span>
         </label>
-        {fieldErrors.gdprConsent && <p className={errorClass}>{fieldErrors.gdprConsent}</p>}
+        {fieldErrors.gdprConsent && <ErrorMsg>{fieldErrors.gdprConsent}</ErrorMsg>}
 
         <label className="flex items-start gap-3 text-sm text-cocoa-700 cursor-pointer">
           <input
@@ -332,13 +398,6 @@ export function B2BForm({ brand }: Props) {
           </span>
         </label>
       </section>
-
-      {/* Error general */}
-      {serverError && (
-        <div className="mb-6 px-4 py-3 bg-red-50 border border-red-200 rounded-md text-sm text-red-800">
-          {serverError}
-        </div>
-      )}
 
       {/* Submit */}
       <button

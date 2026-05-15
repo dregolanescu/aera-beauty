@@ -63,23 +63,13 @@ function collectArray(formData: FormData, name: string): string[] {
 export async function submitColaborare(
   formData: FormData,
 ): Promise<ColaborareResult> {
-  // 1. Pregătire payload (transformăm getAll → array înainte de Zod)
-  const raw = {
-    brand: formData.get('brand'),
-    name: formData.get('name'),
-    email: formData.get('email'),
-    phone: formData.get('phone'),
-    city: formData.get('city'),
-    profile: formData.get('profile'),
-    profileOther: formData.get('profileOther'),
-    interest: collectArray(formData, 'interest'),
-    products: collectArray(formData, 'products'),
-    benefits: collectArray(formData, 'benefits'),
-    followUp: formData.get('followUp'),
-    message: formData.get('message'),
-    gdprConsent: formData.get('gdprConsent'),
-    marketingOptIn: formData.get('marketingOptIn'),
-  }
+  // 1. Pregătire payload — Object.fromEntries lasă afară câmpurile lipsă
+  //    (Zod's .optional()/.default() le va gestiona corect — nu null).
+  //    Apoi suprapunem array-urile pentru multi-checkbox.
+  const raw: Record<string, unknown> = Object.fromEntries(formData.entries())
+  raw.interest = collectArray(formData, 'interest')
+  raw.products = collectArray(formData, 'products')
+  raw.benefits = collectArray(formData, 'benefits')
 
   const parsed = schema.safeParse(raw)
 
