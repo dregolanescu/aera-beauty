@@ -76,7 +76,7 @@ export function CookieBanner() {
                 onClick={dismiss}
                 className="inline-flex items-center px-5 py-2.5 bg-cocoa-700 text-ivory-50 text-xs uppercase tracking-[0.10em] font-medium rounded-md hover:bg-cocoa-900 transition-colors"
               >
-                Înțeles
+                Am înțeles
               </button>
               <Link
                 href="/cookies"
