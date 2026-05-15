@@ -20,7 +20,7 @@ const opportunities = [
   {
     eyebrow: 'Saloane profesionale',
     title: 'Recomandare și revânzare în salon',
-    body: 'Pentru hairstyliști și estheticieni care vor să recomande și să revândă brandurile noastre. Oferim training, materiale de prezentare și condiții comerciale dedicate.',
+    body: 'Pentru hairstiliști și cosmeticieni care vor să recomande și să revândă brandurile noastre. Oferim training, materiale de prezentare și condiții comerciale dedicate.',
   },
   {
     eyebrow: 'Retail & farmacii',

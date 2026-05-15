@@ -158,7 +158,7 @@ export const colaborareConfigs: Record<string, BrandColaborareConfig> = {
     profile: [
       { value: 'client-final', label: 'Client final / pasionat(ă) de haircare' },
       { value: 'retail', label: 'Retail / luxury mass market' },
-      { value: 'salon', label: 'Salon / hairstylist / beauty specialist' },
+      { value: 'salon', label: 'Salon / hairstilist / beauty specialist' },
       { value: 'distribuitor', label: 'Distribuitor / concept store' },
       { value: 'influencer', label: 'Influencer / creator de conținut' },
       { value: 'presa', label: 'Presă / PR' },
