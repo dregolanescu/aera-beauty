@@ -86,17 +86,16 @@ export default function ColaboreazaPage() {
         <section id="formular" className="border-t border-stone-200 bg-ivory-50 scroll-mt-24">
           <div className="mx-auto max-w-5xl px-6 lg:px-12 py-20 md:py-28">
             <FadeIn>
-              <p className="eyebrow mb-4">Alege un brand</p>
+              <p className="eyebrow mb-4">Formulare B2B</p>
               <h2
-                className="section-title max-w-3xl"
+                className="section-title max-w-3xl mb-6"
                 style={{ fontStyle: 'italic' }}
               >
                 Spune-ne ce te interesează.
               </h2>
-              <p className="body-large mt-6 max-w-2xl text-cocoa-700 mb-12">
-                Alege brandul pentru care vrei să discutăm și completează
-                formularul. Revenim în maximum 48 de ore lucrătoare cu detalii
-                despre gamă, prețuri și condiții.
+              <p className="body-large max-w-2xl text-cocoa-700 mb-12">
+                Revenim în maximum 48 de ore lucrătoare cu detalii despre
+                gamă, prețuri și condiții comerciale.
               </p>
             </FadeIn>
 
