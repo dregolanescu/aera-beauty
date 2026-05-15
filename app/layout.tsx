@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { bodoniModa, notoSerifDisplay, inter } from "./fonts";
 import { PrecomandaProvider } from "@/components/precomanda/PrecomandaContext";
+import { CookieBanner } from "@/components/CookieBanner";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -37,6 +38,7 @@ export default function RootLayout({
         <Suspense>
           <PrecomandaProvider>{children}</PrecomandaProvider>
         </Suspense>
+        <CookieBanner />
       </body>
     </html>
   );
