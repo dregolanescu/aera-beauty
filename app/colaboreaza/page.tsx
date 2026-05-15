@@ -2,15 +2,16 @@ import type { Metadata } from 'next'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { FadeIn } from '@/components/motion/FadeIn'
+import { BrandTabs } from '@/components/colaborare/BrandTabs'
 
 export const metadata: Metadata = {
   title: 'Colaborează cu AERA Beauty — parteneriate B2B',
   description:
-    'Suntem deschiși colaborărilor cu saloane profesionale, retailere și distribuitori. Scrie-ne și revenim cu detalii despre game, listare și condiții comerciale.',
+    'Suntem deschiși colaborărilor cu saloane profesionale, retaileri și distribuitori. Trimite-ne datele tale și revenim cu detalii despre game, listare și condiții comerciale.',
   openGraph: {
     title: 'Colaborează cu AERA Beauty',
     description:
-      'Parteneriate B2B pentru saloane profesionale, retailere și distribuitori în România.',
+      'Parteneriate B2B pentru Aqua Mineral, Oliere Paris și Redefine Matcha în România.',
     url: 'https://aerabeauty.ro/colaboreaza',
   },
 }
@@ -66,7 +67,7 @@ export default function ColaboreazaPage() {
 
         {/* 3 oportunități */}
         <section className="border-t border-stone-200">
-          <div className="mx-auto max-w-7xl px-6 lg:px-12 py-20 md:py-28">
+          <div className="mx-auto max-w-7xl px-6 lg:px-12 py-20 md:py-24">
             <div className="grid md:grid-cols-3 gap-8 md:gap-10">
               {opportunities.map((opp, i) => (
                 <FadeIn key={opp.eyebrow} delay={(i + 1) * 0.08}>
@@ -81,56 +82,50 @@ export default function ColaboreazaPage() {
           </div>
         </section>
 
-        {/* CTA contact */}
-        <section className="border-t border-stone-200 bg-ivory-50">
-          <div className="mx-auto max-w-7xl px-6 lg:px-12 py-20 md:py-28 text-center">
+        {/* Formulare per brand */}
+        <section id="formular" className="border-t border-stone-200 bg-ivory-50 scroll-mt-24">
+          <div className="mx-auto max-w-5xl px-6 lg:px-12 py-20 md:py-28">
             <FadeIn>
-              <p className="eyebrow mb-4">Scrie-ne</p>
+              <p className="eyebrow mb-4">Alege un brand</p>
               <h2
-                className="section-title mx-auto max-w-3xl"
+                className="section-title max-w-3xl"
                 style={{ fontStyle: 'italic' }}
               >
-                Spune-ne pe scurt ce ai în minte.
+                Spune-ne ce te interesează.
               </h2>
-              <p className="body-large mt-6 mx-auto max-w-2xl text-cocoa-700">
-                Formularele B2B dedicate fiecărui brand vin în curând. Până
-                atunci, ne poți contacta direct — revenim în maximum 48 de ore
-                lucrătoare cu detalii despre game, prețuri și condiții.
-              </p>
-
-              <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <a
-                  href="mailto:office@aerabeauty.ro?subject=Cerere%20colaborare%20%E2%80%94%20AERA%20Beauty"
-                  className="aera-cta-wrap"
-                >
-                  <span className="aera-cta-halo" aria-hidden="true" />
-                  <span
-                    className="aera-cta-face"
-                    style={{
-                      fontSize: '0.78rem',
-                      letterSpacing: '0.10em',
-                      padding: '14px 32px',
-                      minHeight: '46px',
-                    }}
-                  >
-                    Trimite-ne un email
-                  </span>
-                </a>
-
-                <a
-                  href="https://wa.me/40747306107?text=Salut%2C%20a%C8%99%20vrea%20s%C4%83%20discut%C4%83m%20despre%20o%20colaborare."
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-cocoa-700 hover:text-cocoa-900 transition-colors underline underline-offset-4 text-sm font-medium tracking-wide"
-                >
-                  sau scrie-ne pe WhatsApp →
-                </a>
-              </div>
-
-              <p className="mt-12 text-sm text-taupe-500">
-                office@aerabeauty.ro · +40 747 306 107
+              <p className="body-large mt-6 max-w-2xl text-cocoa-700 mb-12">
+                Alege brandul pentru care vrei să discutăm și completează
+                formularul. Revenim în maximum 48 de ore lucrătoare cu detalii
+                despre gamă, prețuri și condiții.
               </p>
             </FadeIn>
+
+            <BrandTabs />
+          </div>
+        </section>
+
+        {/* Fallback contact direct */}
+        <section className="border-t border-stone-200">
+          <div className="mx-auto max-w-7xl px-6 lg:px-12 py-16 md:py-20 text-center">
+            <p className="body text-cocoa-700 max-w-2xl mx-auto">
+              Preferi contact direct? Scrie-ne la{' '}
+              <a
+                href="mailto:office@aerabeauty.ro?subject=Cerere%20colaborare%20%E2%80%94%20AERA%20Beauty"
+                className="underline underline-offset-4 hover:text-cocoa-900"
+              >
+                office@aerabeauty.ro
+              </a>{' '}
+              sau pe{' '}
+              <a
+                href="https://wa.me/40747306107?text=Salut%2C%20a%C8%99%20vrea%20s%C4%83%20discut%C4%83m%20despre%20o%20colaborare."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-4 hover:text-cocoa-900"
+              >
+                WhatsApp
+              </a>
+              .
+            </p>
           </div>
         </section>
       </main>
