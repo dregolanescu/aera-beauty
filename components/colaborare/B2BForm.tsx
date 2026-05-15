@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, type FormEvent } from 'react'
+import { useState, useRef, useEffect, type FormEvent } from 'react'
 import Link from 'next/link'
 import {
   colaborareConfigs,
@@ -48,6 +48,14 @@ export function B2BForm({ brand }: Props) {
   const [messageLen, setMessageLen] = useState(0)
 
   const formRef = useRef<HTMLFormElement>(null)
+  const successRef = useRef<HTMLDivElement>(null)
+
+  // Scroll la confirmare după trimitere reușită
+  useEffect(() => {
+    if (status === 'success' && successRef.current) {
+      successRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+  }, [status])
 
   // State pentru disable + validare client-side ușoară
   const [name, setName] = useState('')
@@ -134,7 +142,7 @@ export function B2BForm({ brand }: Props) {
 
   if (status === 'success') {
     return (
-      <div className="bg-ivory-50 border border-stone-200 rounded-lg p-8 md:p-10 text-center">
+      <div ref={successRef} className="bg-ivory-50 border border-stone-200 rounded-lg p-8 md:p-10 text-center scroll-mt-24">
         <p className="eyebrow mb-3">Mulțumim</p>
         <h3 className="section-title mb-4" style={{ fontStyle: 'italic' }}>
           Am primit cererea ta.
