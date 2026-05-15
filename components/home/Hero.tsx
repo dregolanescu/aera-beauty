@@ -32,7 +32,7 @@ export function Hero() {
 
           <div className="mt-14 md:mt-16 flex flex-col sm:flex-row gap-4">
             <PrecomandaCTA />
-            <Button href="#branduri" variant="ghost">
+            <Button href="/produse" variant="ghost">
               Descoperă brandurile
             </Button>
           </div>

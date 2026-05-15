@@ -274,3 +274,86 @@ body {
     transition: none;
   }
 }
+
+/* ──────────────────────────────────────────────────────────────────
+   Tipografie pentru pagini legale (politica, termeni, cookies)
+   Editorial dar lizibil; heading-uri Bodoni, body Inter.
+   ────────────────────────────────────────────────────────────────── */
+
+.legal-prose {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--color-cocoa-700);
+}
+
+.legal-prose h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.375rem, 2.2vw, 1.875rem);
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  color: var(--color-cocoa-900);
+  margin-top: 3rem;
+  margin-bottom: 1rem;
+}
+
+.legal-prose h2:first-child {
+  margin-top: 0;
+}
+
+.legal-prose h3 {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 1.0625rem;
+  line-height: 1.35;
+  letter-spacing: 0;
+  color: var(--color-cocoa-900);
+  margin-top: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.legal-prose p {
+  margin-bottom: 1rem;
+}
+
+.legal-prose ul {
+  margin: 0.5rem 0 1rem;
+  padding-left: 1.25rem;
+  list-style: disc;
+}
+.legal-prose ul li {
+  margin-bottom: 0.4rem;
+  padding-left: 0.25rem;
+}
+.legal-prose ul li::marker {
+  color: var(--color-taupe-500);
+}
+
+.legal-prose a {
+  color: var(--color-cocoa-700);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  transition: color 200ms ease;
+}
+.legal-prose a:hover {
+  color: var(--color-cocoa-900);
+}
+
+.legal-prose strong {
+  font-weight: 600;
+  color: var(--color-cocoa-900);
+}
+
+.legal-prose hr {
+  border: none;
+  border-top: 1px solid var(--color-stone-200);
+  margin: 2.5rem 0;
+}
+
+.legal-prose .small-note {
+  font-size: 0.875rem;
+  color: var(--color-taupe-500);
+  font-style: italic;
+}
