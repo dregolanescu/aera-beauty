@@ -64,7 +64,6 @@ export function BrandTabs() {
         <div role="tablist" className="grid grid-cols-3 gap-5 lg:gap-6 mb-12">
           {brands.map((b) => {
             const isActive = active === b.slug
-            const isMatcha = b.accent === 'matcha'
 
             return (
               <button
@@ -89,15 +88,13 @@ export function BrandTabs() {
                   minHeight: '180px',
                 }}
               >
-                {/* Active indicator: corner pill */}
+                {/* Active indicator: corner pill — uniform mocha across all brands */}
                 {isActive && (
                   <span
                     aria-hidden="true"
                     className="absolute top-4 right-4 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] uppercase tracking-[0.12em] font-medium"
                     style={{
-                      background: isMatcha
-                        ? 'var(--color-redefine-matcha)'
-                        : 'var(--color-cocoa-700)',
+                      background: 'var(--color-cocoa-700)',
                       color: 'var(--color-ivory-50)',
                     }}
                   >
@@ -106,22 +103,9 @@ export function BrandTabs() {
                   </span>
                 )}
 
-                {/* Subtle matcha accent dot pe Redefine (visible always, mai vizibil când active) */}
-                {isMatcha && !isActive && (
-                  <span
-                    aria-hidden="true"
-                    className="absolute top-5 right-5 w-2 h-2 rounded-full"
-                    style={{ background: 'var(--color-redefine-matcha)' }}
-                  />
-                )}
-
                 <p
                   className="eyebrow mb-4"
-                  style={{
-                    color: isMatcha && isActive
-                      ? 'var(--color-redefine-matcha-dark)'
-                      : 'var(--color-taupe-500)',
-                  }}
+                  style={{ color: 'var(--color-taupe-500)' }}
                 >
                   {b.category} · {b.hint}
                 </p>
@@ -174,7 +158,6 @@ export function BrandTabs() {
         <div className="space-y-3">
           {brands.map((b) => {
             const open = mobileOpen === b.slug
-            const isMatcha = b.accent === 'matcha'
 
             return (
               <div
@@ -196,15 +179,8 @@ export function BrandTabs() {
                   className="w-full flex items-center justify-between gap-4 px-5 py-5 text-left relative"
                 >
                   <span className="flex flex-col flex-1 min-w-0">
-                    <span className="eyebrow mb-1.5 flex items-center gap-2">
+                    <span className="eyebrow mb-1.5">
                       {b.category} · {b.hint}
-                      {isMatcha && !open && (
-                        <span
-                          aria-hidden="true"
-                          className="w-1.5 h-1.5 rounded-full inline-block"
-                          style={{ background: 'var(--color-redefine-matcha)' }}
-                        />
-                      )}
                     </span>
                     <span
                       style={{
@@ -224,9 +200,7 @@ export function BrandTabs() {
                       aria-hidden="true"
                       className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] uppercase tracking-[0.12em] font-medium shrink-0"
                       style={{
-                        background: isMatcha
-                          ? 'var(--color-redefine-matcha)'
-                          : 'var(--color-cocoa-700)',
+                        background: 'var(--color-cocoa-700)',
                         color: 'var(--color-ivory-50)',
                       }}
                     >
