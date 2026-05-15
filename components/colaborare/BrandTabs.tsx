@@ -38,7 +38,8 @@ const brands: BrandCard[] = [
 
 export function BrandTabs() {
   const [active, setActive] = useState<BrandSlug>('aqua-mineral')
-  const [mobileOpen, setMobileOpen] = useState<BrandSlug | null>('aqua-mineral')
+  // Pe mobile pornim cu toate închise — utilizatorul vede întâi cele 3 opțiuni
+  const [mobileOpen, setMobileOpen] = useState<BrandSlug | null>(null)
 
   function selectBrand(slug: BrandSlug) {
     setActive(slug)
@@ -195,26 +196,12 @@ export function BrandTabs() {
                     </span>
                   </span>
 
-                  {open ? (
-                    <span
-                      aria-hidden="true"
-                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] uppercase tracking-[0.12em] font-medium shrink-0"
-                      style={{
-                        background: 'var(--color-cocoa-700)',
-                        color: 'var(--color-ivory-50)',
-                      }}
-                    >
-                      <Check size={10} strokeWidth={3} />
-                      Selectat
-                    </span>
-                  ) : (
-                    <ChevronDown
-                      size={20}
-                      strokeWidth={1.5}
-                      className="text-cocoa-700 shrink-0"
-                      aria-hidden="true"
-                    />
-                  )}
+                  <ChevronDown
+                    size={20}
+                    strokeWidth={1.5}
+                    className={`text-cocoa-700 shrink-0 transition-transform duration-300 ${open ? 'rotate-180' : ''}`}
+                    aria-hidden="true"
+                  />
                 </button>
 
                 <div
