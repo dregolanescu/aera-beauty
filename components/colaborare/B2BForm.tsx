@@ -78,6 +78,29 @@ export function B2BForm({ brand }: Props) {
     }
   }
 
+  function focusField(field: string) {
+    if (!formRef.current) return
+    const el = formRef.current.querySelector(
+      `[name="${field}"], #${brand}-${field}`,
+    ) as HTMLElement | null
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      // Focus pe input după scroll, fără să resetăm scroll
+      setTimeout(() => {
+        if (typeof el.focus === 'function') el.focus({ preventScroll: true })
+      }, 350)
+    }
+  }
+
+  // Lista câmpurilor obligatorii care încă nu sunt completate
+  const missingFields: { key: string; label: string }[] = []
+  if (name.trim().length < 3 || name.trim().split(/\s+/).length < 2)
+    missingFields.push({ key: 'name', label: 'Nume și prenume' })
+  if (!email.includes('@')) missingFields.push({ key: 'email', label: 'Email' })
+  if (!profile) missingFields.push({ key: 'profile', label: cfg.profileLabel })
+  if (!followUp) missingFields.push({ key: 'followUp', label: 'Mod de contact' })
+  if (!gdpr) missingFields.push({ key: 'gdprConsent', label: 'Acord GDPR' })
+
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (!canSubmit) return
@@ -104,17 +127,8 @@ export function B2BForm({ brand }: Props) {
       setServerError(result.error)
 
       // Scroll smooth la primul câmp cu eroare
-      requestAnimationFrame(() => {
-        const firstField = Object.keys(errs)[0]
-        if (!firstField || !formRef.current) return
-        const el = formRef.current.querySelector(
-          `[name="${firstField}"], #${brand}-${firstField}`,
-        ) as HTMLElement | null
-        if (el) {
-          el.scrollIntoView({ behavior: 'smooth', block: 'center' })
-          if (typeof el.focus === 'function') el.focus({ preventScroll: true })
-        }
-      })
+      const firstField = Object.keys(errs)[0]
+      if (firstField) focusField(firstField)
     }
   }
 
@@ -400,24 +414,52 @@ export function B2BForm({ brand }: Props) {
       </section>
 
       {/* Submit */}
-      <button
-        type="submit"
-        disabled={!canSubmit}
-        className="aera-cta-wrap disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:transform-none"
-      >
-        <span className="aera-cta-halo" aria-hidden="true" />
-        <span
-          className="aera-cta-face"
-          style={{
-            fontSize: '0.78rem',
-            letterSpacing: '0.10em',
-            padding: '14px 32px',
-            minHeight: '46px',
-          }}
+      <div className="flex flex-col gap-4">
+        <button
+          type="submit"
+          disabled={!canSubmit}
+          className="aera-cta-wrap self-start disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:transform-none"
         >
-          {status === 'submitting' ? 'Se trimite...' : `Trimite cererea — ${cfg.name}`}
-        </span>
-      </button>
+          <span className="aera-cta-halo" aria-hidden="true" />
+          <span
+            className="aera-cta-face"
+            style={{
+              fontSize: '0.78rem',
+              letterSpacing: '0.10em',
+              padding: '14px 32px',
+              minHeight: '46px',
+            }}
+          >
+            {status === 'submitting' ? 'Se trimite...' : `Trimite cererea — ${cfg.name}`}
+          </span>
+        </button>
+
+        {/* Hint: ce mai trebuie completat ca să se activeze butonul */}
+        {missingFields.length > 0 && status !== 'submitting' && (
+          <div className="text-sm">
+            <p className="text-taupe-500 mb-1.5 flex items-center gap-1.5">
+              <span aria-hidden="true">⓵</span>
+              Pentru a putea trimite, mai ai de completat:
+            </p>
+            <ul className="flex flex-wrap gap-x-3 gap-y-1.5">
+              {missingFields.map((f, i) => (
+                <li key={f.key} className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => focusField(f.key)}
+                    className="text-cocoa-700 underline underline-offset-2 hover:text-cocoa-900 font-medium"
+                  >
+                    {f.label}
+                  </button>
+                  {i < missingFields.length - 1 && (
+                    <span aria-hidden="true" className="text-taupe-500">·</span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
     </form>
   )
 }
