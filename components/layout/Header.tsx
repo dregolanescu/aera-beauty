@@ -29,17 +29,17 @@ export function Header() {
     <>
       <header className="sticky top-0 z-40 bg-cream-100/80 backdrop-blur-sm border-b border-stone-200/60">
         <div className="mx-auto max-w-7xl px-6 lg:px-12 h-20 md:h-24 grid grid-cols-[1fr_auto_1fr] items-center">
-          {/* LEFT — Logo */}
+          {/* LEFT — Logo (col 1) */}
           <Link
             href="/"
             aria-label="AERA Beauty — pagina principală"
-            className="justify-self-start"
+            className="col-start-1 justify-self-start"
           >
             <Logo className="h-12 md:h-16 w-auto" />
           </Link>
 
-          {/* CENTER — Desktop nav (rămâne ancorat la centrul viewport-ului) */}
-          <nav className="hidden md:flex items-center gap-10">
+          {/* CENTER — Desktop nav (col 2, ancorat la centrul viewport-ului) */}
+          <nav className="col-start-2 hidden md:flex items-center gap-10">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -61,10 +61,10 @@ export function Header() {
             ))}
           </nav>
 
-          {/* RIGHT — Social + CTA + burger */}
-          <div className="flex items-center gap-4 justify-self-end">
-            {/* Social icons (desktop) — viitoare TikTok/FB se adaugă aici */}
-            <div className="hidden md:flex items-center gap-1 -mr-1">
+          {/* RIGHT — Social + CTA + burger (col 3, ancorat la dreapta) */}
+          <div className="col-start-3 flex items-center gap-3 md:gap-4 justify-self-end">
+            {/* Social icons — viitoare TikTok/FB se adaugă aici */}
+            <div className="flex items-center gap-1 -mr-1">
               <a
                 href="https://www.instagram.com/aerabeauty.ro/"
                 target="_blank"
@@ -72,7 +72,7 @@ export function Header() {
                 aria-label="Urmărește AERA Beauty pe Instagram (se deschide într-o filă nouă)"
                 className="inline-flex h-11 w-11 items-center justify-center rounded-full text-cocoa-700 hover:text-cocoa-900 hover:bg-stone-200/40 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cocoa-700 focus-visible:ring-offset-2 focus-visible:ring-offset-cream-100"
               >
-                <Instagram size={20} strokeWidth={1.75} aria-hidden="true" />
+                <Instagram size={22} strokeWidth={1.75} aria-hidden="true" />
               </a>
             </div>
 
