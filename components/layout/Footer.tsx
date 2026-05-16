@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { Instagram } from 'lucide-react'
 import { Logo } from './Logo'
 
 const eyebrowStyle = { color: 'var(--color-taupe-500)' }
@@ -24,6 +25,28 @@ export function Footer() {
             For the love of{' '}
             <span style={{ fontStyle: 'italic' }}>Beauty.</span>
           </p>
+
+          {/* Social — Instagram */}
+          <div className="mt-7">
+            <h3 className="eyebrow mb-2" style={eyebrowStyle}>
+              Urmărește-ne
+            </h3>
+            <div className="flex items-center -ml-2.5">
+              <a
+                href="https://www.instagram.com/aerabeauty.ro/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Urmărește AERA Beauty pe Instagram (se deschide într-o filă nouă)"
+                className="inline-flex h-11 w-11 items-center justify-center rounded-full text-cocoa-700 hover:text-cocoa-900 hover:bg-stone-200/40 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cocoa-700 focus-visible:ring-offset-2 focus-visible:ring-offset-ivory-50"
+              >
+                <Instagram
+                  size={22}
+                  strokeWidth={1.75}
+                  aria-hidden="true"
+                />
+              </a>
+            </div>
+          </div>
         </div>
 
         <div className="grid md:grid-cols-12 gap-8 mb-12">
