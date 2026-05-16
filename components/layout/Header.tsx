@@ -3,7 +3,7 @@
 import { useState, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu } from 'lucide-react'
+import { Instagram, Menu } from 'lucide-react'
 import { Logo } from './Logo'
 import { PrecomandaCTA } from '@/components/precomanda/PrecomandaCTA'
 import { MobileMenu } from './MobileMenu'
@@ -28,16 +28,17 @@ export function Header() {
   return (
     <>
       <header className="sticky top-0 z-40 bg-cream-100/80 backdrop-blur-sm border-b border-stone-200/60">
-        <div className="mx-auto max-w-7xl px-6 lg:px-12 h-20 md:h-24 flex items-center justify-between">
+        <div className="mx-auto max-w-7xl px-6 lg:px-12 h-20 md:h-24 grid grid-cols-[1fr_auto_1fr] items-center">
+          {/* LEFT — Logo */}
           <Link
             href="/"
             aria-label="AERA Beauty — pagina principală"
-            className="block"
+            className="justify-self-start"
           >
             <Logo className="h-12 md:h-16 w-auto" />
           </Link>
 
-          {/* Desktop nav */}
+          {/* CENTER — Desktop nav (rămâne ancorat la centrul viewport-ului) */}
           <nav className="hidden md:flex items-center gap-10">
             {navLinks.map((link) => (
               <Link
@@ -60,7 +61,21 @@ export function Header() {
             ))}
           </nav>
 
-          <div className="flex items-center gap-4">
+          {/* RIGHT — Social + CTA + burger */}
+          <div className="flex items-center gap-4 justify-self-end">
+            {/* Social icons (desktop) — viitoare TikTok/FB se adaugă aici */}
+            <div className="hidden md:flex items-center gap-1 -mr-1">
+              <a
+                href="https://www.instagram.com/aerabeauty.ro/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Urmărește AERA Beauty pe Instagram (se deschide într-o filă nouă)"
+                className="inline-flex h-11 w-11 items-center justify-center rounded-full text-cocoa-700 hover:text-cocoa-900 hover:bg-stone-200/40 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cocoa-700 focus-visible:ring-offset-2 focus-visible:ring-offset-cream-100"
+              >
+                <Instagram size={20} strokeWidth={1.75} aria-hidden="true" />
+              </a>
+            </div>
+
             {/* Desktop CTA */}
             <div className="hidden md:block">
               <PrecomandaCTA size="sm" />

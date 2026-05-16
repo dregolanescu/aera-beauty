@@ -4,7 +4,7 @@ import { useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react'
-import { X } from 'lucide-react'
+import { Instagram, X } from 'lucide-react'
 import { Logo } from './Logo'
 import { PrecomandaCTA } from '@/components/precomanda/PrecomandaCTA'
 
@@ -157,10 +157,25 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
               ))}
             </nav>
 
-            {/* Bottom: CTA + contact */}
+            {/* Bottom: CTA + social + contact */}
             <div className="px-6 pb-10">
               <PrecomandaCTA className="w-full" onAfterOpen={onClose} />
-              <div className="mt-6 flex flex-col gap-2 text-sm text-taupe-500">
+
+              {/* Social — viitoare TikTok/FB se adaugă aici */}
+              <div className="mt-5 -ml-2.5 flex items-center gap-1">
+                <a
+                  href="https://www.instagram.com/aerabeauty.ro/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={onClose}
+                  aria-label="Urmărește AERA Beauty pe Instagram (se deschide într-o filă nouă)"
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-full text-cocoa-700 hover:text-cocoa-900 hover:bg-stone-200/40 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cocoa-700 focus-visible:ring-offset-2 focus-visible:ring-offset-cream-100"
+                >
+                  <Instagram size={22} strokeWidth={1.75} aria-hidden="true" />
+                </a>
+              </div>
+
+              <div className="mt-3 flex flex-col gap-2 text-sm text-taupe-500">
                 <a
                   href="mailto:office@aerabeauty.ro"
                   className="hover:text-cocoa-700 transition-colors"
