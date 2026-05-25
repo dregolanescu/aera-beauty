@@ -140,9 +140,12 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
             {/* Nav links — Bodoni display, editorial */}
             <nav className="flex-1 flex flex-col justify-center px-6 gap-7">
               {navLinks.map((link) => {
+                // Link-urile cu anchor (#) sunt sub-secțiuni — niciodată active pe baza pathname-ului
+                const isAnchorLink = link.href.includes('#')
                 const base = link.href.split('#')[0]
                 const isActive =
-                  pathname === base || pathname.startsWith(base + '/')
+                  !isAnchorLink &&
+                  (pathname === base || pathname.startsWith(base + '/'))
 
                 return (
                   <Link

@@ -45,10 +45,12 @@ export function Header() {
           {/* CENTER — Desktop nav (col 2, ancorat la centrul viewport-ului) */}
           <nav className="col-start-2 hidden md:flex items-center gap-6 lg:gap-8 xl:gap-10">
             {navLinks.map((link) => {
-              // Strip hash fragment înainte de match (link-uri ancor-only)
+              // Link-urile cu anchor (#) sunt sub-secțiuni — niciodată active pe baza pathname-ului
+              const isAnchorLink = link.href.includes('#')
               const base = link.href.split('#')[0]
               const isActive =
-                pathname === base || pathname.startsWith(base + '/')
+                !isAnchorLink &&
+                (pathname === base || pathname.startsWith(base + '/'))
 
               return (
                 <Link
