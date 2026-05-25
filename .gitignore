@@ -39,3 +39,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Temp files
+_temp_*.jpg
+_temp_*.png
+aera-beauty-qr-*.png
+
+# Local Claude settings
+.claude/settings.local.json
