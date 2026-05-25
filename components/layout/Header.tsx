@@ -11,6 +11,10 @@ import { MobileMenu } from './MobileMenu'
 const navLinks = [
   { href: '/despre', label: 'Despre' },
   { href: '/produse', label: 'Produse' },
+  {
+    href: '/produse/aqua-mineral#patente-ingrediente',
+    label: 'Patente & ingrediente active',
+  },
   { href: '/colaboreaza', label: 'Colaborează' },
 ]
 
@@ -39,26 +43,29 @@ export function Header() {
           </Link>
 
           {/* CENTER — Desktop nav (col 2, ancorat la centrul viewport-ului) */}
-          <nav className="col-start-2 hidden md:flex items-center gap-10">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="aera-nav-link button-label"
-                style={{
-                  letterSpacing: '0.04em',
-                  textTransform: 'none',
-                  fontSize: '14px',
-                }}
-                aria-current={
-                  pathname === link.href || pathname.startsWith(link.href + '/')
-                    ? 'page'
-                    : undefined
-                }
-              >
-                {link.label}
-              </Link>
-            ))}
+          <nav className="col-start-2 hidden md:flex items-center gap-6 lg:gap-8 xl:gap-10">
+            {navLinks.map((link) => {
+              // Strip hash fragment înainte de match (link-uri ancor-only)
+              const base = link.href.split('#')[0]
+              const isActive =
+                pathname === base || pathname.startsWith(base + '/')
+
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="aera-nav-link button-label whitespace-nowrap"
+                  style={{
+                    letterSpacing: '0.04em',
+                    textTransform: 'none',
+                    fontSize: '14px',
+                  }}
+                  aria-current={isActive ? 'page' : undefined}
+                >
+                  {link.label}
+                </Link>
+              )
+            })}
           </nav>
 
           {/* RIGHT — Social + CTA + burger (col 3, ancorat la dreapta) */}

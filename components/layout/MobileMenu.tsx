@@ -11,6 +11,10 @@ import { PrecomandaCTA } from '@/components/precomanda/PrecomandaCTA'
 const navLinks = [
   { href: '/despre', label: 'Despre' },
   { href: '/produse', label: 'Produse' },
+  {
+    href: '/produse/aqua-mineral#patente-ingrediente',
+    label: 'Patente & ingrediente active',
+  },
   { href: '/colaboreaza', label: 'Colaborează' },
 ]
 
@@ -134,27 +138,29 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
             </div>
 
             {/* Nav links — Bodoni display, editorial */}
-            <nav className="flex-1 flex flex-col justify-center px-6 gap-8">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={onClose}
-                  className="font-display text-cocoa-700 hover:text-cocoa-900 transition-colors"
-                  style={{
-                    fontSize: 'clamp(1.75rem, 4vw, 2.25rem)',
-                    letterSpacing: '-0.025em',
-                    lineHeight: 1.1,
-                  }}
-                  aria-current={
-                    pathname === link.href || pathname.startsWith(link.href + '/')
-                      ? 'page'
-                      : undefined
-                  }
-                >
-                  {link.label}
-                </Link>
-              ))}
+            <nav className="flex-1 flex flex-col justify-center px-6 gap-7">
+              {navLinks.map((link) => {
+                const base = link.href.split('#')[0]
+                const isActive =
+                  pathname === base || pathname.startsWith(base + '/')
+
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={onClose}
+                    className="font-display text-cocoa-700 hover:text-cocoa-900 transition-colors"
+                    style={{
+                      fontSize: 'clamp(1.625rem, 4vw, 2.25rem)',
+                      letterSpacing: '-0.025em',
+                      lineHeight: 1.15,
+                    }}
+                    aria-current={isActive ? 'page' : undefined}
+                  >
+                    {link.label}
+                  </Link>
+                )
+              })}
             </nav>
 
             {/* Bottom: CTA + social + contact */}

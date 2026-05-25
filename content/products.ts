@@ -2,6 +2,7 @@ export type Product = {
   slug: string
   name: string
   description: string
+  activeIngredients?: string
   image: string
   volume?: string
 }
@@ -47,7 +48,9 @@ export const brands: Brand[] = [
     hero: {
       headline: { line1: 'Marea Moartă,', line2Italic: 'formulată cu știință.' },
       subtitle:
-        'Aqua Mineral este un brand premium de îngrijire, bazat pe minerale și ape din Marea Moartă, îmbogățite cu ingrediente de înaltă calitate și tehnologii cosmetice inovatoare. Fiecare formulă acționează în sinergie pentru a susține sănătatea pielii și a oferi rezultate vizibile, în special în îngrijirea anti-aging.',
+        'Aqua Mineral by AERA Beauty transformă puterea minerală a Mării Moarte într-un ritual premium de skincare, inspirat de conceptul „Fountain of Youth". Formulele îmbină peste 35 de minerale esențiale, ape și nămoluri bogate în magneziu, calciu și potasiu, cu ingrediente naturale rare precum Dunaliella Salina — algă recunoscută pentru conținutul său de beta-caroten și rolul antioxidant.',
+      paragraph:
+        'Prin filosofia „ancient wisdom with modern science", Aqua Mineral aduce împreună tradiția minerală, biotehnologia cosmetică și ingrediente active avansate, inclusiv tehnologii dezvoltate de Sederma France, parte din Croda Beauty Actives. Rezultatul este o experiență de îngrijire cu texturi senzoriale, ritualuri inspirate de spa și efect vizibil de piele mai netedă, luminoasă și revitalizată.',
     },
     ranges: [
       {
@@ -59,25 +62,29 @@ export const brands: Brand[] = [
           {
             slug: 'daily-dewdrops-facial-cleanser',
             name: 'Daily Dewdrops Facial Cleanser',
-            description: 'Gel de curățare zilnică ce îndepărtează delicat impuritățile și machiajul, fără să usuce pielea.',
+            description: 'Lapte de curățare delicat, primul pas pentru o rutină completă.',
+            activeIngredients: 'Ulei de migdale dulci, ulei din sâmburi de struguri, ingrediente blânde de curățare.',
             image: '/products/aqua/daily-dewdrops-facial-cleanser.jpg',
           },
           {
             slug: 'daily-dewdrops-facial-toner',
             name: 'Daily Dewdrops Facial Toner',
-            description: 'Toner echilibrant care reîmprospătează tenul după curățare și pregătește pielea pentru pașii următori.',
+            description: 'Toner de completare a curățării, pentru prospețime și echilibru.',
+            activeIngredients: 'Aloe vera, ingrediente tonifiante, extracte botanice calmante.',
             image: '/products/aqua/daily-dewdrops-facial-toner.jpg',
           },
           {
             slug: 'milky-facial-scrub',
             name: 'Milky Facial Scrub',
-            description: 'Exfoliant delicat cu textură cremoasă, pentru o piele netedă și luminoasă fără senzație de tensiune.',
+            description: 'Scrub facial blând pentru netezire și reîmprospătare.',
+            activeIngredients: 'Dead Sea salts, pudră din sâmburi de caisă, aloe vera, mușețel, ulei de avocado, ulei de migdale.',
             image: '/products/aqua/milky-facial-scrub.jpg',
           },
           {
             slug: 'clarity-peeling-gel',
             name: 'Clarity Peeling Gel',
-            description: 'Peeling enzimatic care îndepărtează celulele moarte și redă tenului prospețime și claritate.',
+            description: 'Peeling gel pentru claritate, luminozitate și textură rafinată.',
+            activeIngredients: 'Dead Sea minerals, Dunaliella Salina, vitamina E, aloe vera, mușețel.',
             image: '/products/aqua/clarity-peeling-gel.jpg',
           },
         ],
@@ -92,26 +99,30 @@ export const brands: Brand[] = [
             slug: 'optima-hydrating-day-cream-dry',
             name: 'Optima Hydrating Day Cream',
             volume: 'Ten normal spre uscat',
-            description: 'Cremă de zi hidratantă pentru ten normal spre uscat, cu textură bogată care hrănește în profunzime.',
+            description: 'Cremă de zi pentru ten normal-uscat, hidratare și confort.',
+            activeIngredients: 'Dead Sea minerals, Renovage™, ingrediente emoliente și hidratante.',
             image: '/products/aqua/optima-hydrating-day-cream-dry.jpg',
           },
           {
             slug: 'optima-hydrating-day-cream-oily',
             name: 'Optima Hydrating Day Cream',
             volume: 'Ten normal spre gras',
-            description: 'Cremă de zi hidratantă pentru ten normal spre gras, cu textură ușoară care echilibrează producția de sebum.',
+            description: 'Cremă de zi pentru ten normal-gras, hidratare echilibrată.',
+            activeIngredients: 'Dead Sea minerals, Renovage™, ingrediente hidratante cu textură potrivită tenului mixt/gras.',
             image: '/products/aqua/optima-hydrating-day-cream-oily.jpg',
           },
           {
             slug: 'youth-essence-serum',
             name: 'Youth Essence Serum',
-            description: 'Ser concentrat pentru fermitate și elasticitate, gândit să sprijine pielea în fiecare etapă a îmbătrânirii.',
+            description: 'Ser anti-aging pentru rutina young / 30+, glow și vitalitate.',
+            activeIngredients: 'Dead Sea minerals, Dunaliella Salina, ingrediente anti-aging și revitalizante.',
             image: '/products/aqua/youth-essence-serum.jpg',
           },
           {
             slug: 'uplift-firming-eye-gel',
             name: 'Uplift Firming Eye Gel',
-            description: 'Gel de ochi cu efect de fermitate, formulat pentru zona delicată și pentru a reduce semnele de oboseală.',
+            description: 'Gel pentru conturul ochilor, cu senzație de fermitate și prospețime.',
+            activeIngredients: 'Dead Sea minerals, ingrediente cu efect de fermitate și decongestionare.',
             image: '/products/aqua/uplift-firming-eye-gel.jpg',
           },
         ],
@@ -125,7 +136,8 @@ export const brands: Brand[] = [
           {
             slug: 'supreme-face-serum',
             name: 'Supreme Face Serum',
-            description: 'Ser premium cu acțiune anti-aging multidimensională, pentru un ten vizibil mai ferm și mai luminos.',
+            description: 'Ser premium pentru fermitate și elasticitate.',
+            activeIngredients: 'Resistem™, Q10, vitamine, antioxidanți.',
             image: '/products/aqua/supreme-face-serum.jpg',
           },
         ],
@@ -139,20 +151,23 @@ export const brands: Brand[] = [
           {
             slug: '24k-intensive-face-cream',
             name: '24K Intensive Face Cream',
-            description: 'Cremă bogată cu particule de aur 24K, care lasă pielea catifelată și luminoasă încă de la prima aplicare.',
+            description: 'Cremă premium pentru fermitate și luminozitate.',
+            activeIngredients: '24K gold, Tightenex™, vitamina E, calendula, ingrediente nutritive.',
             image: '/products/aqua/24k-intensive-face-cream.jpg',
           },
           {
             slug: '24k-intensive-face-serum',
             name: '24K Intensive Face Serum',
-            description: 'Ser premium cu particule de aur 24K și complex de minerale, pentru un ten ferm și uniform.',
+            description: 'Ser luxos pentru fermitate, glow și rafinare.',
+            activeIngredients: '24K gold, Tightenex™, antioxidanți, vitamina C, ulei din sâmburi de struguri.',
             image: '/products/aqua/24k-intensive-face-serum.jpg',
           },
           {
             slug: '24k-intensive-mask',
             name: '24K Intensive Mask',
             volume: '50 ml',
-            description: 'Mască intensivă cu aur 24K și tehnologia Tightenex™, pentru un efect de fermitate vizibil și luminozitate.',
+            description: 'Mască statement pentru glow auriu și fermitate.',
+            activeIngredients: '24K gold, Tightenex™, uleiuri calmante, ingrediente nutritive.',
             image: '/products/aqua/24k-intensive-mask.jpg',
           },
         ],
@@ -166,19 +181,22 @@ export const brands: Brand[] = [
           {
             slug: 'juveness-de-wrinkle-cream',
             name: 'Juveness De-Wrinkle Cream',
-            description: 'Cremă antirid cu efect de netezire vizibil după aplicare, care lucrează în profunzime pentru rezultate de durată.',
+            description: 'Cremă premium anti-rid pentru piele cu aspect mai neted.',
+            activeIngredients: 'Renovage™, Dead Sea minerals, ingrediente anti-aging.',
             image: '/products/aqua/juveness-de-wrinkle-cream.jpg',
           },
           {
             slug: 'extensor-deep-lifting-mask',
             name: 'Extensor Deep Lifting Mask',
-            description: 'Mască cu efect de lifting profund, formulată pentru un ten vizibil mai ferm și mai bine definit.',
+            description: 'Mască premium pentru efect de lifting vizibil și rafinare.',
+            activeIngredients: 'Tightenex™, Dead Sea minerals, active cu efect de tightening.',
             image: '/products/aqua/extensor-deep-lifting-mask.jpg',
           },
           {
             slug: 'puffiness-eraser',
             name: 'Puffiness Eraser',
-            description: 'Tratament țintit pentru zona ochilor, care reduce vizibil pungile și senzația de oboseală.',
+            description: 'Tratament cosmetic cu efect rapid pentru zona ochilor, conceput să atenueze vizibil aspectul de pungi și oboseală.',
+            activeIngredients: 'Eyeliss™, peptide, active pentru aspect de pungi reduse și contur ochi mai neted.',
             image: '/products/aqua/puffiness-eraser.jpg',
           },
         ],
@@ -192,13 +210,15 @@ export const brands: Brand[] = [
           {
             slug: 'smart-delivery-facial-cream',
             name: 'Smart Delivery Facial Cream',
-            description: 'Cremă inteligentă cu tehnologii de livrare în profunzime, pentru hidratare susținută și fermitate.',
+            description: 'Cremă avansată cu tehnologii smart delivery pentru netezire vizibilă și hidratare în profunzime.',
+            activeIngredients: 'X50® Hyalufiller™, CollaPlant Z NPNF®, delivery peptide complex.',
             image: '/products/aqua/smart-delivery-facial-cream.jpg',
           },
           {
             slug: 'timeless-glow-wrinkle-filler',
             name: 'Timeless Glow Wrinkle Filler',
-            description: 'Filler cosmetic pentru atenuarea ridurilor, cu efect de umplere imediat și luminozitate progresivă.',
+            description: 'Filler cosmetic pentru riduri și linii de expresie, cu efect de umplere vizibil și luminozitate progresivă.',
+            activeIngredients: 'Hyaluronic Filling Spheres™, microsfere cu efect de filling, acid hialuronic.',
             image: '/products/aqua/timeless-glow-wrinkle-filler.jpg',
           },
         ],
@@ -212,13 +232,15 @@ export const brands: Brand[] = [
           {
             slug: 'blissful-body-butter',
             name: 'Blissful Body Butter — Starlight Glamour',
-            description: 'Unt de corp luxos, cu parfum delicat de Starlight Glamour, care hrănește pielea și o lasă mătăsoasă.',
+            description: 'Unt de corp bogat, pentru hidratare și confort de durată.',
+            activeIngredients: 'Shea butter, ulei de măsline, avocado, sâmburi de struguri, vitamine E & C, Dunaliella Salina.',
             image: '/products/aqua/blissful-body-butter.jpg',
           },
           {
             slug: 'total-silk-body-scrub',
             name: 'Total Silk Body Scrub — Forest Dreams',
-            description: 'Scrub de corp cu minerale și uleiuri naturale, pentru o piele netedă, hidratată și catifelată.',
+            description: 'Exfoliant corporal spa, pentru piele netedă și catifelată.',
+            activeIngredients: 'Dead Sea minerals, săruri minerale, ulei de sâmburi de struguri, susan, migdale dulci.',
             image: '/products/aqua/total-silk-body-scrub.jpg',
           },
         ],

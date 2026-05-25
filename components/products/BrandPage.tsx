@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import Image from 'next/image'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
@@ -6,9 +7,13 @@ import { ProductCard } from './ProductCard'
 import { BrandCTA } from './BrandCTA'
 import type { Brand } from '@/content/products'
 
-type Props = { brand: Brand }
+type Props = {
+  brand: Brand
+  /** Slot opțional între hero și prima gamă (ex: secțiunea Ingrediente active pe Aqua). */
+  belowHero?: ReactNode
+}
 
-export function BrandPage({ brand }: Props) {
+export function BrandPage({ brand, belowHero }: Props) {
   return (
     <>
       <Header />
@@ -65,6 +70,9 @@ export function BrandPage({ brand }: Props) {
             </FadeIn>
           </div>
         </section>
+
+        {/* Slot opțional între hero și gamă (ex: Patente & ingrediente active) */}
+        {belowHero}
 
         {/* Product ranges */}
         {brand.ranges.map((range, ri) => (
