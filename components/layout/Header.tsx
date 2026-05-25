@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Instagram, Menu } from 'lucide-react'
@@ -22,10 +22,10 @@ export function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const burgerRef = useRef<HTMLButtonElement>(null)
   const pathname = usePathname()
+  const activeAnchorHref = useActiveAnchorHref(navLinks, pathname)
 
   function handleClose() {
     setMenuOpen(false)
-    // Return focus to burger after drawer closes
     requestAnimationFrame(() => burgerRef.current?.focus())
   }
 
@@ -33,7 +33,6 @@ export function Header() {
     <>
       <header className="sticky top-0 z-40 bg-cream-100/80 backdrop-blur-sm border-b border-stone-200/60">
         <div className="mx-auto max-w-7xl px-6 lg:px-12 h-20 md:h-24 grid grid-cols-[1fr_auto_1fr] items-center">
-          {/* LEFT — Logo (col 1) */}
           <Link
             href="/"
             aria-label="AERA Beauty — pagina principală"
@@ -42,20 +41,22 @@ export function Header() {
             <Logo className="h-12 md:h-16 w-auto" />
           </Link>
 
-          {/* CENTER — Desktop nav (col 2, ancorat la centrul viewport-ului) */}
           <nav className="col-start-2 hidden md:flex items-center gap-6 lg:gap-8 xl:gap-10">
             {navLinks.map((link) => {
-              // Link-urile cu anchor (#) sunt sub-secțiuni — niciodată active pe baza pathname-ului
               const isAnchorLink = link.href.includes('#')
               const base = link.href.split('#')[0]
-              const isActive =
-                !isAnchorLink &&
-                (pathname === base || pathname.startsWith(base + '/'))
+              const pathMatch =
+                pathname === base || pathname.startsWith(base + '/')
+
+              const isActive = isAnchorLink
+                ? activeAnchorHref === link.href
+                : pathMatch && activeAnchorHref === null
 
               return (
                 <Link
                   key={link.href}
                   href={link.href}
+                  onClick={(e) => handleAnchorClick(e, link.href, pathname)}
                   className="aera-nav-link button-label whitespace-nowrap"
                   style={{
                     letterSpacing: '0.04em',
@@ -70,9 +71,7 @@ export function Header() {
             })}
           </nav>
 
-          {/* RIGHT — Social + CTA + burger (col 3, ancorat la dreapta) */}
           <div className="col-start-3 flex items-center gap-3 md:gap-4 justify-self-end">
-            {/* Social icons — viitoare TikTok/FB se adaugă aici */}
             <div className="flex items-center gap-1 -mr-1">
               <a
                 href="https://www.instagram.com/aerabeauty.ro/"
@@ -85,12 +84,10 @@ export function Header() {
               </a>
             </div>
 
-            {/* Desktop CTA */}
             <div className="hidden md:block">
               <PrecomandaCTA size="sm" />
             </div>
 
-            {/* Mobile burger */}
             <button
               ref={burgerRef}
               onClick={() => setMenuOpen(true)}
@@ -107,4 +104,96 @@ export function Header() {
       <MobileMenu isOpen={menuOpen} onClose={handleClose} />
     </>
   )
+}
+
+export function handleAnchorClick(
+  e: React.MouseEvent<HTMLAnchorElement>,
+  href: string,
+  currentPathname: string,
+) {
+  if (!href.includes('#')) return
+  const [base, hash] = href.split('#')
+  if (!hash) return
+  if (currentPathname !== base) return
+
+  const el = document.getElementById(hash)
+  if (!el) return
+
+  e.preventDefault()
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+
+  if (window.location.hash !== `#${hash}`) {
+    window.history.replaceState(null, '', href)
+  }
+}
+
+function useActiveAnchorHref(
+  links: { href: string }[],
+  pathname: string,
+): string | null {
+  const [activeHref, setActiveHref] = useState<string | null>(null)
+
+  useEffect(() => {
+    const relevant: { id: string; href: string }[] = []
+    for (const link of links) {
+      if (!link.href.includes('#')) continue
+      const [base, hash] = link.href.split('#')
+      if (base === pathname && hash) {
+        relevant.push({ id: hash, href: link.href })
+      }
+    }
+
+    if (relevant.length === 0) {
+      setActiveHref(null)
+      return
+    }
+
+    const elements = new Map<Element, string>()
+    for (const { id, href } of relevant) {
+      const el = document.getElementById(id)
+      if (el) elements.set(el, href)
+    }
+    if (elements.size === 0) return
+
+    const visible = new Map<Element, number>()
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            visible.set(entry.target, entry.intersectionRatio)
+          } else {
+            visible.delete(entry.target)
+          }
+        }
+
+        if (visible.size === 0) {
+          setActiveHref(null)
+          return
+        }
+
+        let topEl: Element | null = null
+        let topRatio = -1
+        for (const [el, ratio] of visible) {
+          if (ratio > topRatio) {
+            topRatio = ratio
+            topEl = el
+          }
+        }
+        if (topEl) {
+          const href = elements.get(topEl)
+          if (href) setActiveHref(href)
+        }
+      },
+      {
+        rootMargin: '-100px 0px -40% 0px',
+        threshold: [0, 0.1, 0.25, 0.5, 0.75, 1],
+      },
+    )
+
+    elements.forEach((_, el) => observer.observe(el))
+    return () => observer.disconnect()
+  }, [pathname, links])
+
+  return activeHref
 }

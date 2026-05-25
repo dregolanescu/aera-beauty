@@ -7,6 +7,7 @@ import { motion, AnimatePresence, useReducedMotion } from 'motion/react'
 import { Instagram, X } from 'lucide-react'
 import { Logo } from './Logo'
 import { PrecomandaCTA } from '@/components/precomanda/PrecomandaCTA'
+import { handleAnchorClick } from './Header'
 
 const navLinks = [
   { href: '/despre', label: 'Despre' },
@@ -29,7 +30,6 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
   const panelRef = useRef<HTMLDivElement>(null)
   const pathname = usePathname()
 
-  // ESC to close
   useEffect(() => {
     if (!isOpen) return
     const handler = (e: KeyboardEvent) => {
@@ -39,18 +39,14 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
     return () => document.removeEventListener('keydown', handler)
   }, [isOpen, onClose])
 
-  // Focus trap + focus close button on open
   useEffect(() => {
     if (!isOpen) return
 
-    // Focus close button
     requestAnimationFrame(() => closeRef.current?.focus())
 
-    // Inert on main content
     const main = document.getElementById('main-content')
     if (main) main.setAttribute('inert', '')
 
-    // Lock body scroll
     document.body.style.overflow = 'hidden'
 
     return () => {
@@ -59,7 +55,6 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
     }
   }, [isOpen])
 
-  // Focus trap: cycle Tab within panel
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (e.key !== 'Tab' || !panelRef.current) return
@@ -97,7 +92,6 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop */}
           <motion.div
             className="fixed inset-0 z-50 bg-cocoa-900/40 backdrop-blur-sm"
             initial={{ opacity: 0 }}
@@ -108,7 +102,6 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
             aria-hidden="true"
           />
 
-          {/* Panel */}
           <motion.div
             ref={panelRef}
             className="fixed inset-0 z-50 bg-cream-100 flex flex-col"
@@ -124,7 +117,6 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
             }}
             onKeyDown={handleKeyDown}
           >
-            {/* Header row: logo + close */}
             <div className="h-20 flex items-center justify-between px-6">
               <Logo className="h-12 w-auto" />
               <button
@@ -137,10 +129,8 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
               </button>
             </div>
 
-            {/* Nav links — Bodoni display, editorial */}
             <nav className="flex-1 flex flex-col justify-center px-6 gap-7">
               {navLinks.map((link) => {
-                // Link-urile cu anchor (#) sunt sub-secțiuni — niciodată active pe baza pathname-ului
                 const isAnchorLink = link.href.includes('#')
                 const base = link.href.split('#')[0]
                 const isActive =
@@ -151,7 +141,10 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                   <Link
                     key={link.href}
                     href={link.href}
-                    onClick={onClose}
+                    onClick={(e) => {
+                      handleAnchorClick(e, link.href, pathname)
+                      onClose()
+                    }}
                     className="font-display text-cocoa-700 hover:text-cocoa-900 transition-colors"
                     style={{
                       fontSize: 'clamp(1.625rem, 4vw, 2.25rem)',
@@ -166,11 +159,9 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
               })}
             </nav>
 
-            {/* Bottom: CTA + social + contact */}
             <div className="px-6 pb-10">
               <PrecomandaCTA className="w-full" onAfterOpen={onClose} />
 
-              {/* Social — viitoare TikTok/FB se adaugă aici */}
               <div className="mt-5 -ml-2.5 flex items-center gap-1">
                 <a
                   href="https://www.instagram.com/aerabeauty.ro/"
