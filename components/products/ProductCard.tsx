@@ -16,7 +16,6 @@ export function ProductCard({ product, brandName, priority = false }: Props) {
   const [expanded, setExpanded] = useState(false)
   const shouldReduce = useReducedMotion()
 
-  // Are produsul detalii extinse (direcții / recomandare / rutină / frază)?
   const hasDetails = Boolean(
     product.directions ||
       product.usage ||
@@ -40,11 +39,17 @@ export function ProductCard({ product, brandName, priority = false }: Props) {
         />
       </div>
       <div className="flex flex-col flex-1 p-5">
-        <h3 className="card-title mb-1">{product.name}</h3>
+        {/* Title — min-height de 2 linii pentru aliniere uniformă în row */}
+        <h3 className="card-title mb-1" style={{ minHeight: '2.4em' }}>
+          {product.name}
+        </h3>
         {product.volume && (
           <p className="text-sm text-taupe-500 mb-3">{product.volume}</p>
         )}
-        <p className="body text-cocoa-700 flex-1">{product.description}</p>
+        {/* Description — min-height de 2 linii pentru baseline uniform */}
+        <p className="body text-cocoa-700" style={{ minHeight: '3em' }}>
+          {product.description}
+        </p>
 
         {product.activeIngredients && (
           <div className="mt-4 pt-4 border-t border-stone-200">
@@ -142,10 +147,7 @@ export function ProductCard({ product, brandName, priority = false }: Props) {
 function DetailBlock({ label, text }: { label: string; text: string }) {
   return (
     <div>
-      <p
-        className="eyebrow mb-1.5"
-        style={{ color: 'var(--color-taupe-500)' }}
-      >
+      <p className="eyebrow mb-1.5" style={{ color: 'var(--color-taupe-500)' }}>
         {label}
       </p>
       <p
