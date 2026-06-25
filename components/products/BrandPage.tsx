@@ -92,7 +92,7 @@ export function BrandPage({ brand, belowHero }: Props) {
                 )}
               </FadeIn>
 
-              <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-7">
+              <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-7 items-start">
                 {range.products.map((product, pi) => (
                   <FadeIn key={product.slug} delay={(pi + 1) * 0.06}>
                     <ProductCard

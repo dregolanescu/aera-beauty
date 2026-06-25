@@ -26,7 +26,7 @@ export function ProductCard({ product, brandName, priority = false }: Props) {
 
   return (
     <div
-      className="flex flex-col h-full bg-ivory-50 border border-stone-200 rounded-md overflow-hidden"
+      className="flex flex-col bg-ivory-50 border border-stone-200 rounded-md overflow-hidden"
       style={{ borderWidth: '0.5px' }}
     >
       <div className="relative h-56 md:h-64 bg-white">
