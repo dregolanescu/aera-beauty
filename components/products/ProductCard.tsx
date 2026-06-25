@@ -12,6 +12,17 @@ type Props = {
   priority?: boolean
 }
 
+/**
+ * Aliniere uniformă în grid:
+ * - Title min-height = 2 linii (egalizează nume scurte vs lungi)
+ * - Description min-height ≈ 2 linii
+ * - Ingredients text min-height ≈ 2 linii
+ * - Volume area rezervată chiar dacă produsul nu are volume (evităm shift)
+ * - Button cu mt-auto: ancorat la baza cardului, indiferent de conținut
+ * Combinat cu grid items-start pe BrandPage → cardurile se aliniază
+ * pixel-perfect în mod colapsat și expand-ul afectează doar cardul activ.
+ */
+
 export function ProductCard({ product, brandName, priority = false }: Props) {
   const [expanded, setExpanded] = useState(false)
   const shouldReduce = useReducedMotion()
@@ -38,15 +49,22 @@ export function ProductCard({ product, brandName, priority = false }: Props) {
           priority={priority}
         />
       </div>
+
       <div className="flex flex-col flex-1 p-5">
-        {/* Title — min-height de 2 linii pentru aliniere uniformă în row */}
+        {/* Title — min 2 linii */}
         <h3 className="card-title mb-1" style={{ minHeight: '2.4em' }}>
           {product.name}
         </h3>
-        {product.volume && (
-          <p className="text-sm text-taupe-500 mb-3">{product.volume}</p>
-        )}
-        {/* Description — min-height de 2 linii pentru baseline uniform */}
+
+        {/* Volume slot rezervat chiar dacă lipsește (evităm offset între carduri) */}
+        <p
+          className="text-sm text-taupe-500 mb-3"
+          style={{ minHeight: '1.25em' }}
+        >
+          {product.volume ?? ' '}
+        </p>
+
+        {/* Description — min ≈ 2 linii */}
         <p className="body text-cocoa-700" style={{ minHeight: '3em' }}>
           {product.description}
         </p>
@@ -61,7 +79,10 @@ export function ProductCard({ product, brandName, priority = false }: Props) {
             </p>
             <p
               className="text-sm leading-relaxed"
-              style={{ color: 'var(--color-cocoa-700)' }}
+              style={{
+                color: 'var(--color-cocoa-700)',
+                minHeight: '3.5em',
+              }}
             >
               {product.activeIngredients}
             </p>
@@ -120,11 +141,12 @@ export function ProductCard({ product, brandName, priority = false }: Props) {
               </div>
             </motion.div>
 
+            {/* mt-auto: ancorează butonul la baza cardului — uniformitate perfectă */}
             <button
               type="button"
               onClick={() => setExpanded((v) => !v)}
               aria-expanded={expanded}
-              className="mt-4 inline-flex items-center gap-1.5 self-start text-xs uppercase tracking-[0.10em] font-medium text-cocoa-700 hover:text-cocoa-900 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cocoa-700 focus-visible:ring-offset-2 focus-visible:ring-offset-ivory-50 rounded-sm"
+              className="mt-auto pt-4 inline-flex items-center gap-1.5 self-start text-xs uppercase tracking-[0.10em] font-medium text-cocoa-700 hover:text-cocoa-900 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cocoa-700 focus-visible:ring-offset-2 focus-visible:ring-offset-ivory-50 rounded-sm"
               style={{ letterSpacing: '0.10em' }}
             >
               <span>{expanded ? 'Vezi mai puțin' : 'Vezi mai mult'}</span>
