@@ -63,6 +63,14 @@ function collectArray(formData: FormData, name: string): string[] {
 export async function submitColaborare(
   formData: FormData,
 ): Promise<ColaborareResult> {
+  // 0. Honeypot — dacă botul a completat câmpul „website", returnăm silent
+  //    success ca să nu afle că a fost prins. Nu trimitem email, nu salvăm în DB.
+  const honeypot = formData.get('website')
+  if (typeof honeypot === 'string' && honeypot.trim().length > 0) {
+    console.log('[colaborare] Honeypot triggered — silently rejecting submission')
+    return { ok: true }
+  }
+
   // 1. Pregătire payload — Object.fromEntries lasă afară câmpurile lipsă
   //    (Zod's .optional()/.default() le va gestiona corect — nu null).
   //    Apoi suprapunem array-urile pentru multi-checkbox.
@@ -70,6 +78,8 @@ export async function submitColaborare(
   raw.interest = collectArray(formData, 'interest')
   raw.products = collectArray(formData, 'products')
   raw.benefits = collectArray(formData, 'benefits')
+  // Eliminăm câmpul honeypot înainte de parse (nu e în schema Zod)
+  delete raw.website
 
   const parsed = schema.safeParse(raw)
 

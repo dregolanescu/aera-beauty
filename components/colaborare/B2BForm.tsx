@@ -168,6 +168,25 @@ export function B2BForm({ brand }: Props) {
     <form ref={formRef} onSubmit={handleSubmit} noValidate>
       <input type="hidden" name="brand" value={brand} />
 
+      {/* Honeypot — câmp invizibil pentru utilizatori, vizibil pentru boți.
+          Dacă vine completat → server-action returnează silent success. */}
+      <input
+        type="text"
+        name="website"
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        defaultValue=""
+        style={{
+          position: 'absolute',
+          left: '-9999px',
+          width: '1px',
+          height: '1px',
+          opacity: 0,
+          pointerEvents: 'none',
+        }}
+      />
+
       <p className="body text-cocoa-700 mb-10 max-w-2xl">{cfg.taglineForm}</p>
 
       {/* Banner sumar erori — apare doar dacă există fieldErrors */}

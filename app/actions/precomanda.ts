@@ -51,8 +51,18 @@ function hashIp(ip: string): string {
 export async function submitPrecomanda(
   formData: FormData,
 ): Promise<PrecomandaResult> {
+  // 0. Honeypot — dacă botul a completat câmpul „website", returnăm silent
+  //    success ca să nu afle că a fost prins. Nu trimitem email, nu salvăm în DB.
+  const honeypot = formData.get('website')
+  if (typeof honeypot === 'string' && honeypot.trim().length > 0) {
+    console.log('[precomanda] Honeypot triggered — silently rejecting submission')
+    return { ok: true }
+  }
+
   // 1. Validate
   const raw = Object.fromEntries(formData.entries())
+  // Eliminăm câmpul honeypot din raw înainte de parse (Zod nu trebuie să-l vadă)
+  delete (raw as Record<string, unknown>).website
   const parsed = schema.safeParse(raw)
 
   if (!parsed.success) {

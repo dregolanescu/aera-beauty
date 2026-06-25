@@ -228,6 +228,26 @@ export function PrecomandaModal({ isOpen, onClose, prefill }: Props) {
                     noValidate
                     className="space-y-5"
                   >
+                    {/* Honeypot — câmp invizibil pentru utilizatori, vizibil pentru boți.
+                        Dacă vine completat → server-action returnează silent success fără
+                        să trimită email sau să salveze în DB. */}
+                    <input
+                      type="text"
+                      name="website"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      aria-hidden="true"
+                      defaultValue=""
+                      style={{
+                        position: 'absolute',
+                        left: '-9999px',
+                        width: '1px',
+                        height: '1px',
+                        opacity: 0,
+                        pointerEvents: 'none',
+                      }}
+                    />
+
                     {/* Nume */}
                     <div>
                       <label htmlFor="pc-name" className={labelClass}>
