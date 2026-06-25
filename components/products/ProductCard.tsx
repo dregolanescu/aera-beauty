@@ -52,7 +52,7 @@ export function ProductCard({ product, brandName, priority = false }: Props) {
 
       <div className="flex flex-col flex-1 p-5">
         {/* Title — min 2 linii */}
-        <h3 className="card-title mb-1" style={{ minHeight: '2.4em' }}>
+        <h3 className="card-title mb-1" style={{ minHeight: '3em' }}>
           {product.name}
         </h3>
 
@@ -65,7 +65,7 @@ export function ProductCard({ product, brandName, priority = false }: Props) {
         </p>
 
         {/* Description — min ≈ 2 linii */}
-        <p className="body text-cocoa-700" style={{ minHeight: '3em' }}>
+        <p className="body text-cocoa-700" style={{ minHeight: '3.5em' }}>
           {product.description}
         </p>
 
@@ -81,7 +81,7 @@ export function ProductCard({ product, brandName, priority = false }: Props) {
               className="text-sm leading-relaxed"
               style={{
                 color: 'var(--color-cocoa-700)',
-                minHeight: '3.5em',
+                minHeight: '5.5em',
               }}
             >
               {product.activeIngredients}
