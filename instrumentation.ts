@@ -6,6 +6,8 @@
  * Documentație: https://nextjs.org/docs/app/api-reference/file-conventions/instrumentation
  */
 
+import * as Sentry from '@sentry/nextjs'
+
 export async function register() {
   if (process.env.NEXT_RUNTIME === 'nodejs') {
     await import('./sentry.server.config')
@@ -15,5 +17,5 @@ export async function register() {
   }
 }
 
-// Re-export onRequestError hook ca Sentry să capteze erori de request automat
-export { onRequestError } from '@sentry/nextjs'
+// Export hook-ul pentru Next.js 15+ ca să captăm erori de request
+export const onRequestError = Sentry.captureRequestError

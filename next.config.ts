@@ -78,7 +78,8 @@ export default withSentryConfig(nextConfig, {
   reactComponentAnnotation: { enabled: false },
   // Tunnel route — ocolește ad-blockers care blochează sentry.io directly
   tunnelRoute: '/monitoring',
-  hideSourceMaps: true,
+  // Source maps sunt uploadate către Sentry, apoi șterse din output public
+  sourcemaps: { deleteSourcemapsAfterUpload: true },
   disableLogger: true,
   automaticVercelMonitors: false,
 })
