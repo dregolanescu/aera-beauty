@@ -5,6 +5,7 @@ import { headers } from 'next/headers'
 import { createHash } from 'crypto'
 import { Resend } from 'resend'
 import { getSupabase } from '@/lib/supabase'
+import { checkRateLimit } from '@/lib/ratelimit'
 import {
   buildLeadNotificationHtml,
   buildLeadNotificationSubject,
@@ -89,6 +90,16 @@ export async function submitPrecomanda(
   const ipHashed = hashIp(rawIp)
   const userAgent = hdrs.get('user-agent') ?? 'unknown'
   const timestamp = new Date().toISOString()
+
+  // 1.5. Rate limiting — max 5 cereri pe minut per IP
+  const rl = await checkRateLimit(rawIp)
+  if (!rl.success) {
+    console.warn('[ratelimit] Blocked submission from', ipHashed, 'reset in', rl.resetSeconds, 's')
+    return {
+      ok: false,
+      error: `Prea multe \u00eencerc\u0103ri. Te rug\u0103m s\u0103 \u00eencerci din nou \u00een ${rl.resetSeconds} secunde.`,
+    }
+  }
   const marketingOptIn = d.marketingOptIn === 'on'
 
   // 2. Insert into Supabase (graceful if not configured)
