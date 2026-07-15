@@ -1,0 +1,36 @@
+name: Supabase keep-alive
+
+# Previne pauza automată a proiectului Supabase pe planul free.
+# Free tier pune proiectul pe pauză după 7 zile fără activitate în baza de date.
+# Rulăm de 2 ori pe săptămână (luni & joi) un query minimal, ca să resetăm
+# contorul de inactivitate. Chiar dacă o rulare pică, cealaltă rămâne mult
+# sub pragul de 7 zile.
+
+on:
+  schedule:
+    - cron: '0 6 * * 1,4' # Luni și Joi la 06:00 UTC
+  workflow_dispatch: {} # Buton de rulare manuală din tab-ul Actions
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase REST (select minimal pe precomenzi)
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_KEY" ]; then
+            echo "Lipsesc secretele SUPABASE_URL sau SUPABASE_SERVICE_ROLE_KEY."
+            exit 1
+          fi
+          HTTP=$(curl -s -o /dev/null -w "%{http_code}" \
+            "${SUPABASE_URL}/rest/v1/precomenzi?select=id&limit=1" \
+            -H "apikey: ${SUPABASE_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_KEY}")
+          echo "HTTP status: $HTTP"
+          if [ "$HTTP" -lt 200 ] || [ "$HTTP" -ge 300 ]; then
+            echo "Keep-alive a eșuat (status $HTTP)."
+            exit 1
+          fi
+          echo "Keep-alive OK — proiectul Supabase a primit un query."
