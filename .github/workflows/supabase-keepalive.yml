@@ -1,36 +1,61 @@
 name: Supabase keep-alive
 
 # Previne pauza automată a proiectului Supabase pe planul free.
-# Free tier pune proiectul pe pauză după 7 zile fără activitate în baza de date.
-# Rulăm de 2 ori pe săptămână (luni & joi) un query minimal, ca să resetăm
-# contorul de inactivitate. Chiar dacă o rulare pică, cealaltă rămâne mult
-# sub pragul de 7 zile.
+#
+# Istoric: prima versiune făcea un SELECT minimal de 2 ori pe săptămână.
+# A rulat verde (HTTP 200) pe 16 și 20 iul 2026, dar Supabase a pauzat
+# proiectul oricum pe 22 iul — un read pe un tabel gol e prea ieftin ca
+# resurse și nu resetează contorul lor de "low activity".
+#
+# Versiunea asta face o SCRIERE reală (upsert), ZILNIC, într-o tabelă
+# dedicată `keepalive` — ca să nu atingem niciodată datele GDPR din
+# `precomenzi` / `colaborari`.
+#
+# Bonus: dacă proiectul e totuși pauzat, requestul pică și workflow-ul
+# devine roșu — deci primești notificare de la GitHub, nu afli peste 3
+# săptămâni dintr-un email de la Supabase.
 
 on:
   schedule:
-    - cron: '0 6 * * 1,4' # Luni și Joi la 06:00 UTC
+    - cron: '0 6 * * *' # Zilnic la 06:00 UTC
   workflow_dispatch: {} # Buton de rulare manuală din tab-ul Actions
 
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping Supabase REST (select minimal pe precomenzi)
+      - name: Upsert în tabela keepalive (activitate reală pe DB)
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
-          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_KEY" ]; then
-            echo "Lipsesc secretele SUPABASE_URL sau SUPABASE_SERVICE_ROLE_KEY."
+          set -uo pipefail
+
+          if [ -z "${SUPABASE_URL:-}" ] || [ -z "${SUPABASE_KEY:-}" ]; then
+            echo "::error::Lipsesc secretele SUPABASE_URL sau SUPABASE_SERVICE_ROLE_KEY."
             exit 1
           fi
-          HTTP=$(curl -s -o /dev/null -w "%{http_code}" \
-            "${SUPABASE_URL}/rest/v1/precomenzi?select=id&limit=1" \
+
+          NOW=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          BODY=$(printf '{"id":1,"last_ping":"%s","source":"github-actions"}' "$NOW")
+
+          RESP=$(curl -s -w "\n%{http_code}" -X POST \
+            "${SUPABASE_URL}/rest/v1/keepalive" \
             -H "apikey: ${SUPABASE_KEY}" \
-            -H "Authorization: Bearer ${SUPABASE_KEY}")
+            -H "Authorization: Bearer ${SUPABASE_KEY}" \
+            -H "Content-Type: application/json" \
+            -H "Prefer: resolution=merge-duplicates,return=representation" \
+            -d "$BODY")
+
+          HTTP=$(printf '%s' "$RESP" | tail -n1)
+          PAYLOAD=$(printf '%s' "$RESP" | sed '$d')
+
           echo "HTTP status: $HTTP"
+          echo "Răspuns: $PAYLOAD"
+
           if [ "$HTTP" -lt 200 ] || [ "$HTTP" -ge 300 ]; then
-            echo "Keep-alive a eșuat (status $HTTP)."
+            echo "::error::Keep-alive a eșuat (status $HTTP). Proiectul Supabase poate fi pe pauză."
             exit 1
           fi
-          echo "Keep-alive OK — proiectul Supabase a primit un query."
+
+          echo "Keep-alive OK — scriere confirmată în tabela keepalive."
