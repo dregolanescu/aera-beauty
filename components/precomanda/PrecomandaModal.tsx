@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react'
 import { X } from 'lucide-react'
 import { submitPrecomanda, type PrecomandaResult } from '@/app/actions/precomanda'
+import { suggestEmail } from '@/lib/email-typo'
 
 type Prefill = {
   brand?: 'aqua-mineral' | 'oliere-paris' | 'redefine-matcha'
@@ -42,6 +43,7 @@ export function PrecomandaModal({ isOpen, onClose, prefill }: Props) {
   const [brand, setBrand] = useState(prefill?.brand ?? '')
   const [gdpr, setGdpr] = useState(false)
   const [sentEmail, setSentEmail] = useState('')
+  const [emailSuggestion, setEmailSuggestion] = useState('')
 
   // Reset form when opened
   useEffect(() => {
@@ -55,6 +57,7 @@ export function PrecomandaModal({ isOpen, onClose, prefill }: Props) {
       setBrand(prefill?.brand ?? '')
       setGdpr(false)
       setSentEmail('')
+      setEmailSuggestion('')
     }
   }, [isOpen, prefill])
 
@@ -297,9 +300,23 @@ export function PrecomandaModal({ isOpen, onClose, prefill }: Props) {
                         className={inputClass}
                         style={fieldErrors.email ? { borderColor: '#A32D2D' } : undefined}
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e) => { setEmail(e.target.value); setEmailSuggestion('') }}
+                        onBlur={() => setEmailSuggestion(suggestEmail(email) ?? '')}
                       />
                       {fieldErrors.email && <p className={errorClass}>{fieldErrors.email}</p>}
+                      {emailSuggestion && (
+                        <p className="text-[13px] text-cocoa-700 mt-1">
+                          Ai vrut să spui{' '}
+                          <button
+                            type="button"
+                            onClick={() => { setEmail(emailSuggestion); setEmailSuggestion('') }}
+                            className="font-medium underline underline-offset-2 hover:text-cocoa-900"
+                          >
+                            {emailSuggestion}
+                          </button>
+                          ?
+                        </p>
+                      )}
                     </div>
 
                     {/* Telefon + Oraș (row) */}

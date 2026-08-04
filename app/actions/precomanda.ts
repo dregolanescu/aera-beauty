@@ -7,6 +7,7 @@ import { Resend } from 'resend'
 import * as Sentry from '@sentry/nextjs'
 import { getSupabase } from '@/lib/supabase'
 import { checkRateLimit } from '@/lib/ratelimit'
+import { domainAcceptsEmail } from '@/lib/email-mx'
 import {
   buildLeadNotificationHtml,
   buildLeadNotificationSubject,
@@ -102,6 +103,19 @@ export async function submitPrecomanda(
     }
   }
   const marketingOptIn = d.marketingOptIn === 'on'
+
+  // 1.6. Verificare domeniu email (MX) — respinge domenii care nu primesc email.
+  //      Fail-open: un lookup DNS neconcludent nu blochează lead-ul.
+  if (!(await domainAcceptsEmail(d.email))) {
+    return {
+      ok: false,
+      error: 'Adresa de email pare invalidă.',
+      fieldErrors: {
+        email:
+          'Domeniul acestei adrese nu pare să primească email-uri. Verifică adresa.',
+      },
+    }
+  }
 
   // 2. Insert into Supabase (graceful if not configured)
   let leadId: string | undefined

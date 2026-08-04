@@ -8,6 +8,7 @@ import {
   type BrandColaborareConfig,
 } from '@/content/colaborare-forms'
 import { submitColaborare } from '@/app/actions/colaborare'
+import { suggestEmail } from '@/lib/email-typo'
 
 type Props = {
   brand: 'aqua-mineral' | 'oliere-paris' | 'redefine-matcha'
@@ -47,6 +48,7 @@ export function B2BForm({ brand }: Props) {
   const [serverError, setServerError] = useState('')
   const [messageLen, setMessageLen] = useState(0)
   const [sentEmail, setSentEmail] = useState('')
+  const [emailSuggestion, setEmailSuggestion] = useState('')
 
   const formRef = useRef<HTMLFormElement>(null)
   const successRef = useRef<HTMLDivElement>(null)
@@ -247,12 +249,26 @@ export function B2BForm({ brand }: Props) {
               type="email"
               required
               value={email}
-              onChange={(e) => { setEmail(e.target.value); clearFieldError('email') }}
+              onChange={(e) => { setEmail(e.target.value); clearFieldError('email'); setEmailSuggestion('') }}
+              onBlur={() => setEmailSuggestion(suggestEmail(email) ?? '')}
               className={inputCls('email')}
               placeholder="nume@exemplu.ro"
               aria-invalid={!!fieldErrors.email}
             />
             {fieldErrors.email && <ErrorMsg>{fieldErrors.email}</ErrorMsg>}
+            {emailSuggestion && (
+              <p className="text-xs text-cocoa-700 mt-2">
+                Ai vrut să spui{' '}
+                <button
+                  type="button"
+                  onClick={() => { setEmail(emailSuggestion); setEmailSuggestion('') }}
+                  className="font-medium underline underline-offset-2 hover:text-cocoa-900"
+                >
+                  {emailSuggestion}
+                </button>
+                ?
+              </p>
+            )}
           </div>
         </div>
         <div className={ROW}>
