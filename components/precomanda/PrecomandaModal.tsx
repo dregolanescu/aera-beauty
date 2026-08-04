@@ -41,6 +41,7 @@ export function PrecomandaModal({ isOpen, onClose, prefill }: Props) {
   const [email, setEmail] = useState('')
   const [brand, setBrand] = useState(prefill?.brand ?? '')
   const [gdpr, setGdpr] = useState(false)
+  const [sentEmail, setSentEmail] = useState('')
 
   // Reset form when opened
   useEffect(() => {
@@ -53,6 +54,7 @@ export function PrecomandaModal({ isOpen, onClose, prefill }: Props) {
       setEmail('')
       setBrand(prefill?.brand ?? '')
       setGdpr(false)
+      setSentEmail('')
     }
   }, [isOpen, prefill])
 
@@ -124,6 +126,7 @@ export function PrecomandaModal({ isOpen, onClose, prefill }: Props) {
     const result: PrecomandaResult = await submitPrecomanda(fd)
 
     if (result.ok) {
+      setSentEmail(email)
       setStatus('success')
     } else {
       setStatus('error')
@@ -207,8 +210,21 @@ export function PrecomandaModal({ isOpen, onClose, prefill }: Props) {
                     className="py-8 text-center"
                   >
                     <p className="body-large text-cocoa-700 mb-4">
-                      Mulțumim. Am primit cererea ta și revenim în maximum 48 de ore lucrătoare. Între timp, poți descoperi colecțiile AERA.
+                      Mulțumim. Am primit cererea ta și revenim în maximum 48 de ore lucrătoare.
                     </p>
+                    {sentEmail && (
+                      <p className="text-[14px] text-cocoa-700 mb-4 max-w-md mx-auto">
+                        Ți-am trimis o confirmare pe email la{' '}
+                        <span className="font-medium text-cocoa-900">{sentEmail}</span>. Dacă nu o vezi, verifică și folderul spam. Dacă adresa nu e corectă, scrie-ne la{' '}
+                        <a
+                          href="mailto:office@aerabeauty.ro"
+                          className="underline underline-offset-2 hover:text-cocoa-900"
+                        >
+                          office@aerabeauty.ro
+                        </a>
+                        .
+                      </p>
+                    )}
                     <Link
                       href="/produse"
                       onClick={onClose}

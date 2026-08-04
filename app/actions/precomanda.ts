@@ -4,6 +4,7 @@ import { z } from 'zod'
 import { headers } from 'next/headers'
 import { createHash } from 'crypto'
 import { Resend } from 'resend'
+import * as Sentry from '@sentry/nextjs'
 import { getSupabase } from '@/lib/supabase'
 import { checkRateLimit } from '@/lib/ratelimit'
 import {
@@ -129,7 +130,15 @@ export async function submitPrecomanda(
 
     if (dbError) {
       console.error('[precomanda] Supabase insert error:', dbError)
-      // Don't fail the user — log and continue
+      // Don't fail the user — log, alert, and continue
+      Sentry.captureException(
+        new Error(`[precomanda] Supabase insert failed: ${dbError.message}`),
+        {
+          level: 'error',
+          tags: { form: 'precomanda', step: 'db_insert' },
+          extra: { code: dbError.code, details: dbError.details, hint: dbError.hint },
+        },
+      )
     } else {
       leadId = row?.id
     }
@@ -157,6 +166,12 @@ export async function submitPrecomanda(
         2,
       ),
     )
+    if (process.env.NODE_ENV === 'production') {
+      Sentry.captureMessage(
+        '[precomanda] Supabase not configured in production — lead not persisted',
+        'warning',
+      )
+    }
   }
 
   // 3. Send emails via Resend (graceful if not configured)
@@ -166,7 +181,7 @@ export async function submitPrecomanda(
 
     // 3a. Notification to office
     try {
-      await resend.emails.send({
+      const { error: officeErr } = await resend.emails.send({
         from: 'AERA Beauty <noreply@aerabeauty.ro>',
         to: 'office@aerabeauty.ro',
         subject: buildLeadNotificationSubject(d.name, d.brand),
@@ -185,23 +200,49 @@ export async function submitPrecomanda(
           leadId,
         }),
       })
+      if (officeErr) {
+        console.error('[precomanda] Resend office email error:', officeErr)
+        Sentry.captureException(
+          new Error(`[precomanda] Resend office send failed: ${officeErr.message}`),
+          { tags: { form: 'precomanda', step: 'email_office' }, extra: { officeErr } },
+        )
+      }
     } catch (err) {
-      console.error('[precomanda] Resend office email error:', err)
+      console.error('[precomanda] Resend office email threw:', err)
+      Sentry.captureException(err, {
+        tags: { form: 'precomanda', step: 'email_office' },
+      })
     }
 
     // 3b. Confirmation to user
     try {
-      await resend.emails.send({
+      const { error: userErr } = await resend.emails.send({
         from: 'AERA Beauty <noreply@aerabeauty.ro>',
         to: d.email,
         subject: 'Am primit cererea ta - AERA Beauty',
         html: buildUserConfirmationHtml(d.name),
       })
+      if (userErr) {
+        console.error('[precomanda] Resend user email error:', userErr)
+        Sentry.captureException(
+          new Error(`[precomanda] Resend user confirmation send failed: ${userErr.message}`),
+          { tags: { form: 'precomanda', step: 'email_user' }, extra: { userErr } },
+        )
+      }
     } catch (err) {
-      console.error('[precomanda] Resend user email error:', err)
+      console.error('[precomanda] Resend user email threw:', err)
+      Sentry.captureException(err, {
+        tags: { form: 'precomanda', step: 'email_user' },
+      })
     }
   } else {
     console.log('[precomanda] Resend not configured — skipping emails')
+    if (process.env.NODE_ENV === 'production') {
+      Sentry.captureMessage(
+        '[precomanda] Resend not configured in production — no emails sent',
+        'warning',
+      )
+    }
   }
 
   return { ok: true }

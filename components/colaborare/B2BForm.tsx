@@ -46,6 +46,7 @@ export function B2BForm({ brand }: Props) {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [serverError, setServerError] = useState('')
   const [messageLen, setMessageLen] = useState(0)
+  const [sentEmail, setSentEmail] = useState('')
 
   const formRef = useRef<HTMLFormElement>(null)
   const successRef = useRef<HTMLDivElement>(null)
@@ -121,6 +122,7 @@ export function B2BForm({ brand }: Props) {
     const result = await submitColaborare(fd)
 
     if (result.ok) {
+      setSentEmail(email)
       setStatus('success')
       setName('')
       setEmail('')
@@ -148,9 +150,24 @@ export function B2BForm({ brand }: Props) {
           Am primit cererea ta.
         </h3>
         <p className="body text-cocoa-700 max-w-xl mx-auto">
-          Revenim în maximum 48 de ore lucrătoare la adresa și prin canalul pe
-          care le-ai indicat. Între timp, ți-am trimis și o confirmare pe email.
+          Revenim în maximum 48 de ore lucrătoare, prin canalul pe care l-ai
+          indicat.
         </p>
+        {sentEmail && (
+          <p className="body text-cocoa-700 max-w-xl mx-auto mt-3">
+            Ți-am trimis o confirmare pe email la{' '}
+            <span className="font-medium text-cocoa-900">{sentEmail}</span>. Dacă
+            nu o vezi în câteva minute, verifică și folderul spam. Dacă adresa nu e
+            corectă, scrie-ne la{' '}
+            <a
+              href="mailto:office@aerabeauty.ro"
+              className="underline underline-offset-2 hover:text-cocoa-900"
+            >
+              office@aerabeauty.ro
+            </a>{' '}
+            și rezolvăm.
+          </p>
+        )}
         <button
           type="button"
           onClick={() => setStatus('idle')}
