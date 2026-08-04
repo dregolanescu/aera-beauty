@@ -4,8 +4,10 @@ import { z } from 'zod'
 import { headers } from 'next/headers'
 import { createHash } from 'crypto'
 import { Resend } from 'resend'
+import * as Sentry from '@sentry/nextjs'
 import { getSupabase } from '@/lib/supabase'
 import { checkRateLimit } from '@/lib/ratelimit'
+import { domainAcceptsEmail } from '@/lib/email-mx'
 import {
   buildColaborareNotificationHtml,
   buildColaborareNotificationSubject,
@@ -120,6 +122,19 @@ export async function submitColaborare(
   }
   const marketingOptIn = d.marketingOptIn === 'on'
 
+  // 1.6. Verificare domeniu email (MX) — respinge domenii care nu primesc email.
+  //      Fail-open: un lookup DNS neconcludent nu blochează lead-ul.
+  if (!(await domainAcceptsEmail(d.email))) {
+    return {
+      ok: false,
+      error: 'Adresa de email pare invalidă.',
+      fieldErrors: {
+        email:
+          'Domeniul acestei adrese nu pare să primească email-uri. Verifică adresa.',
+      },
+    }
+  }
+
   // 2. Insert în Supabase (graceful dacă nu e configurat)
   let leadId: string | undefined
   const supabase = getSupabase()
@@ -152,6 +167,14 @@ export async function submitColaborare(
 
     if (dbError) {
       console.error('[colaborare] Supabase insert error:', dbError)
+      Sentry.captureException(
+        new Error(`[colaborare] Supabase insert failed: ${dbError.message}`),
+        {
+          level: 'error',
+          tags: { form: 'colaborare', step: 'db_insert' },
+          extra: { code: dbError.code, details: dbError.details, hint: dbError.hint },
+        },
+      )
     } else {
       leadId = row?.id
     }
@@ -171,6 +194,12 @@ export async function submitColaborare(
         2,
       ),
     )
+    if (process.env.NODE_ENV === 'production') {
+      Sentry.captureMessage(
+        '[colaborare] Supabase not configured in production — lead not persisted',
+        'warning',
+      )
+    }
   }
 
   // 3. Send emails via Resend (graceful dacă nu e configurat)
@@ -180,7 +209,7 @@ export async function submitColaborare(
 
     // 3a. Notificare la office
     try {
-      await resend.emails.send({
+      const { error: officeErr } = await resend.emails.send({
         from: 'AERA Beauty <noreply@aerabeauty.ro>',
         to: 'office@aerabeauty.ro',
         subject: buildColaborareNotificationSubject(d.name, d.brand),
@@ -204,23 +233,49 @@ export async function submitColaborare(
           leadId,
         }),
       })
+      if (officeErr) {
+        console.error('[colaborare] Resend office email error:', officeErr)
+        Sentry.captureException(
+          new Error(`[colaborare] Resend office send failed: ${officeErr.message}`),
+          { tags: { form: 'colaborare', step: 'email_office' }, extra: { officeErr } },
+        )
+      }
     } catch (err) {
-      console.error('[colaborare] Resend office email error:', err)
+      console.error('[colaborare] Resend office email threw:', err)
+      Sentry.captureException(err, {
+        tags: { form: 'colaborare', step: 'email_office' },
+      })
     }
 
     // 3b. Confirmare către user
     try {
-      await resend.emails.send({
+      const { error: userErr } = await resend.emails.send({
         from: 'AERA Beauty <noreply@aerabeauty.ro>',
         to: d.email,
         subject: 'Am primit cererea ta de colaborare - AERA Beauty',
         html: buildColaborareConfirmationHtml(d.name, d.brand),
       })
+      if (userErr) {
+        console.error('[colaborare] Resend user email error:', userErr)
+        Sentry.captureException(
+          new Error(`[colaborare] Resend user confirmation send failed: ${userErr.message}`),
+          { tags: { form: 'colaborare', step: 'email_user' }, extra: { userErr } },
+        )
+      }
     } catch (err) {
-      console.error('[colaborare] Resend user email error:', err)
+      console.error('[colaborare] Resend user email threw:', err)
+      Sentry.captureException(err, {
+        tags: { form: 'colaborare', step: 'email_user' },
+      })
     }
   } else {
     console.log('[colaborare] Resend not configured — skipping emails')
+    if (process.env.NODE_ENV === 'production') {
+      Sentry.captureMessage(
+        '[colaborare] Resend not configured in production — no emails sent',
+        'warning',
+      )
+    }
   }
 
   return { ok: true }

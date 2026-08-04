@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react'
 import { X } from 'lucide-react'
 import { submitPrecomanda, type PrecomandaResult } from '@/app/actions/precomanda'
+import { suggestEmail } from '@/lib/email-typo'
 
 type Prefill = {
   brand?: 'aqua-mineral' | 'oliere-paris' | 'redefine-matcha'
@@ -41,6 +42,8 @@ export function PrecomandaModal({ isOpen, onClose, prefill }: Props) {
   const [email, setEmail] = useState('')
   const [brand, setBrand] = useState(prefill?.brand ?? '')
   const [gdpr, setGdpr] = useState(false)
+  const [sentEmail, setSentEmail] = useState('')
+  const [emailSuggestion, setEmailSuggestion] = useState('')
 
   // Reset form when opened
   useEffect(() => {
@@ -53,6 +56,8 @@ export function PrecomandaModal({ isOpen, onClose, prefill }: Props) {
       setEmail('')
       setBrand(prefill?.brand ?? '')
       setGdpr(false)
+      setSentEmail('')
+      setEmailSuggestion('')
     }
   }, [isOpen, prefill])
 
@@ -124,6 +129,7 @@ export function PrecomandaModal({ isOpen, onClose, prefill }: Props) {
     const result: PrecomandaResult = await submitPrecomanda(fd)
 
     if (result.ok) {
+      setSentEmail(email)
       setStatus('success')
     } else {
       setStatus('error')
@@ -207,8 +213,21 @@ export function PrecomandaModal({ isOpen, onClose, prefill }: Props) {
                     className="py-8 text-center"
                   >
                     <p className="body-large text-cocoa-700 mb-4">
-                      Mulțumim. Am primit cererea ta și revenim în maximum 48 de ore lucrătoare. Între timp, poți descoperi colecțiile AERA.
+                      Mulțumim. Am primit cererea ta și revenim în maximum 48 de ore lucrătoare.
                     </p>
+                    {sentEmail && (
+                      <p className="text-[14px] text-cocoa-700 mb-4 max-w-md mx-auto">
+                        Ți-am trimis o confirmare pe email la{' '}
+                        <span className="font-medium text-cocoa-900">{sentEmail}</span>. Dacă nu o vezi, verifică și folderul spam. Dacă adresa nu e corectă, scrie-ne la{' '}
+                        <a
+                          href="mailto:office@aerabeauty.ro"
+                          className="underline underline-offset-2 hover:text-cocoa-900"
+                        >
+                          office@aerabeauty.ro
+                        </a>
+                        .
+                      </p>
+                    )}
                     <Link
                       href="/produse"
                       onClick={onClose}
@@ -281,9 +300,23 @@ export function PrecomandaModal({ isOpen, onClose, prefill }: Props) {
                         className={inputClass}
                         style={fieldErrors.email ? { borderColor: '#A32D2D' } : undefined}
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e) => { setEmail(e.target.value); setEmailSuggestion('') }}
+                        onBlur={() => setEmailSuggestion(suggestEmail(email) ?? '')}
                       />
                       {fieldErrors.email && <p className={errorClass}>{fieldErrors.email}</p>}
+                      {emailSuggestion && (
+                        <p className="text-[13px] text-cocoa-700 mt-1">
+                          Ai vrut să spui{' '}
+                          <button
+                            type="button"
+                            onClick={() => { setEmail(emailSuggestion); setEmailSuggestion('') }}
+                            className="font-medium underline underline-offset-2 hover:text-cocoa-900"
+                          >
+                            {emailSuggestion}
+                          </button>
+                          ?
+                        </p>
+                      )}
                     </div>
 
                     {/* Telefon + Oraș (row) */}
