@@ -54,6 +54,17 @@ function verifySignature(payload: string, headers: Headers, secret: string): boo
   })
 }
 
+/**
+ * Doar domeniul destinatarului, pentru loguri și pentru context în Sentry. Adresa
+ * completă a unui vizitator e dată cu caracter personal: rămâne exclusiv în alerta
+ * trimisă către office@ (operatorul datelor) și în dashboardul Resend.
+ */
+function recipientDomain(to: string): string {
+  const first = to.split(',')[0]?.trim() ?? ''
+  const domain = first.split('@')[1]?.trim()
+  return domain ? domain : 'necunoscut'
+}
+
 export async function POST(req: Request): Promise<Response> {
   const secret = process.env.RESEND_WEBHOOK_SECRET
   if (!secret) {
@@ -84,11 +95,15 @@ export async function POST(req: Request): Promise<Response> {
     const reason =
       event.data?.bounce?.message ?? event.data?.bounce?.type ?? event.type
     const kind = event.type === 'email.complained' ? 'plângere (spam)' : 'bounce'
+    const emailId = event.data?.email_id ?? 'necunoscut'
 
-    console.warn(`[resend-webhook] ${event.type}: ${to} — ${reason}`)
-    Sentry.captureMessage(
-      `[resend-webhook] ${event.type}: ${to} — ${reason}`,
-      'warning',
+    // Un bounce nu e o eroare de aplicație, ci un eveniment de business: Resend îl are
+    // deja în dashboard și în suppression list, iar office@ primește alerta de mai jos.
+    // Nu îl mai raportăm în Sentry — fiecare adresă tastată greșit de un vizitator
+    // redeschidea același issue ca „regresie". În Sentry ajunge doar eșecul alertei.
+    // Pentru corelare logăm email_id-ul din Resend și domeniul, nu adresa.
+    console.warn(
+      `[resend-webhook] ${event.type} · email_id=${emailId} · domeniu=${recipientDomain(to)}`,
     )
 
     // Alertă la office ca echipa să reia contactul pe alt canal. Nu trimitem dacă
@@ -107,14 +122,23 @@ export async function POST(req: Request): Promise<Response> {
             `Destinatar: ${to}\n` +
             `Subiect: ${subject}\n` +
             `Motiv: ${reason}\n` +
-            `Tip eveniment: ${event.type}\n\n` +
+            `Tip eveniment: ${event.type}\n` +
+            `ID Resend: ${emailId}\n\n` +
             `Dacă era o confirmare de formular, contactează persoana pe alt canal ` +
             `(telefon/WhatsApp) sau verifică dacă adresa a fost tastată greșit.`,
         })
       } catch (err) {
-        console.error('[resend-webhook] alert email threw:', err)
+        console.error(
+          `[resend-webhook] alerta către office@ a eșuat · email_id=${emailId}:`,
+          err,
+        )
         Sentry.captureException(err, {
-          tags: { area: 'resend_webhook', step: 'alert_email' },
+          tags: {
+            area: 'resend_webhook',
+            step: 'alert_email',
+            event_type: event.type,
+          },
+          extra: { email_id: emailId, recipient_domain: recipientDomain(to) },
         })
       }
     }
