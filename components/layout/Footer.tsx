@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { Instagram } from 'lucide-react'
+import { AdvanguardGlint } from './AdvanguardGlint'
 import { Logo } from './Logo'
 
 const eyebrowStyle = { color: 'var(--color-taupe-500)' }
@@ -172,6 +173,24 @@ export function Footer() {
               Cookies
             </Link>
           </div>
+          <a
+            href="https://advanguard.ro"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Site realizat de Advanguard (se deschide într-o filă nouă)"
+            className="group inline-flex items-center gap-1.5 self-start md:self-auto"
+          >
+            <span>Site by</span>
+            <span
+              aria-hidden="true"
+              className="adv-credit-mark"
+              style={{ height: '24px', width: '116px' }}
+            >
+              <span className="adv-credit-fill bg-cocoa-700 group-hover:bg-cocoa-900 transition-colors duration-200" />
+              {/* Strat separat: reflexul de lumină care parcurge muchiile literelor */}
+              <AdvanguardGlint />
+            </span>
+          </a>
         </div>
       </div>
 
