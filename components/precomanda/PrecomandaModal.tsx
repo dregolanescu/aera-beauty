@@ -6,6 +6,7 @@ import { motion, AnimatePresence, useReducedMotion } from 'motion/react'
 import { X } from 'lucide-react'
 import { submitPrecomanda, type PrecomandaResult } from '@/app/actions/precomanda'
 import { suggestEmail } from '@/lib/email-typo'
+import { isBrandPublic } from '@/content/brand-visibility'
 
 type Prefill = {
   brand?: 'aqua-mineral' | 'oliere-paris' | 'redefine-matcha'
@@ -18,13 +19,24 @@ type Props = {
   prefill?: Prefill
 }
 
-const brandOptions = [
+const allBrandOptions = [
   { value: '', label: 'Alege un brand' },
   { value: 'aqua-mineral', label: 'Aqua Mineral' },
   { value: 'oliere-paris', label: 'Oliere Paris' },
   { value: 'redefine-matcha', label: 'Redefine Matcha' },
   { value: 'toate', label: 'Toate' },
 ]
+
+// Brandurile ascunse public nu apar în listă (vezi content/brand-visibility.ts).
+// Câmpul și fluxul de trimitere rămân neschimbate.
+const brandOptions = allBrandOptions.filter(
+  (opt) => opt.value === '' || opt.value === 'toate' || isBrandPublic(opt.value),
+)
+
+/** Precompletarea unui brand ascuns se ignoră — select-ul nu are acea opțiune. */
+function initialBrand(prefill?: Prefill): string {
+  return prefill?.brand && isBrandPublic(prefill.brand) ? prefill.brand : ''
+}
 
 export function PrecomandaModal({ isOpen, onClose, prefill }: Props) {
   const shouldReduce = useReducedMotion()
@@ -40,7 +52,7 @@ export function PrecomandaModal({ isOpen, onClose, prefill }: Props) {
   // Form field state for disabled logic
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
-  const [brand, setBrand] = useState(prefill?.brand ?? '')
+  const [brand, setBrand] = useState(initialBrand(prefill))
   const [gdpr, setGdpr] = useState(false)
   const [sentEmail, setSentEmail] = useState('')
   const [emailSuggestion, setEmailSuggestion] = useState('')
@@ -54,7 +66,7 @@ export function PrecomandaModal({ isOpen, onClose, prefill }: Props) {
       setMessageLen(0)
       setName('')
       setEmail('')
-      setBrand(prefill?.brand ?? '')
+      setBrand(initialBrand(prefill))
       setGdpr(false)
       setSentEmail('')
       setEmailSuggestion('')

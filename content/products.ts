@@ -1,3 +1,5 @@
+import { isBrandPublic } from './brand-visibility'
+
 export type Product = {
   slug: string
   name: string
@@ -750,3 +752,6 @@ export const brands: Brand[] = [
 export function getBrand(slug: string): Brand | undefined {
   return brands.find((b) => b.slug === slug)
 }
+
+/** Brandurile vizibile public — ascunderea se face în content/brand-visibility.ts. */
+export const publicBrands: Brand[] = brands.filter((b) => isBrandPublic(b.slug))

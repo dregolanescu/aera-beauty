@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { Instagram } from 'lucide-react'
 import { AdvanguardGlint } from './AdvanguardGlint'
 import { Logo } from './Logo'
+import { isBrandPublic } from '@/content/brand-visibility'
 
 const eyebrowStyle = { color: 'var(--color-taupe-500)' }
 const mutedLinkClass =
@@ -81,30 +82,36 @@ export function Footer() {
               Branduri
             </h3>
             <ul className="space-y-1.5 text-sm">
-              <li>
-                <Link
-                  href="/produse/aqua-mineral"
-                  className={mutedLinkClass}
-                >
-                  Aqua Mineral
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/produse/oliere-paris"
-                  className={mutedLinkClass}
-                >
-                  Oliere Paris
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/produse/redefine-matcha"
-                  className={mutedLinkClass}
-                >
-                  Redefine Matcha
-                </Link>
-              </li>
+              {isBrandPublic('aqua-mineral') && (
+                <li>
+                  <Link
+                    href="/produse/aqua-mineral"
+                    className={mutedLinkClass}
+                  >
+                    Aqua Mineral
+                  </Link>
+                </li>
+              )}
+              {isBrandPublic('oliere-paris') && (
+                <li>
+                  <Link
+                    href="/produse/oliere-paris"
+                    className={mutedLinkClass}
+                  >
+                    Oliere Paris
+                  </Link>
+                </li>
+              )}
+              {isBrandPublic('redefine-matcha') && (
+                <li>
+                  <Link
+                    href="/produse/redefine-matcha"
+                    className={mutedLinkClass}
+                  >
+                    Redefine Matcha
+                  </Link>
+                </li>
+              )}
             </ul>
           </div>
 

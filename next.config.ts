@@ -1,5 +1,6 @@
 import type { NextConfig } from 'next'
 import { withSentryConfig } from '@sentry/nextjs'
+import { HIDDEN_BRANDS } from './content/brand-visibility'
 
 /**
  * Security headers aplicate pe toate rutele.
@@ -57,6 +58,23 @@ const nextConfig: NextConfig = {
         headers: securityHeaders,
       },
     ]
+  },
+  /**
+   * Brandurile ascunse public (content/brand-visibility.ts) răspund cu 404 real.
+   * Ruta e rescrisă, înainte de rutarea pe fișiere, spre o cale care nu poate
+   * exista (folderele `_` din app/ nu sunt rutabile). Doar notFound() din pagină
+   * ar da „soft 404" (status 200), pentru că layout-ul rădăcină învelește
+   * paginile în <Suspense>.
+   */
+  async rewrites() {
+    return {
+      beforeFiles: HIDDEN_BRANDS.map((slug) => ({
+        source: `/produse/${slug}/:path*`,
+        destination: '/_brand-ascuns',
+      })),
+      afterFiles: [],
+      fallback: [],
+    }
   },
 }
 

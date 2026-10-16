@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Check, ChevronDown } from 'lucide-react'
 import { B2BForm } from './B2BForm'
+import { isBrandPublic } from '@/content/brand-visibility'
 
 type BrandSlug = 'aqua-mineral' | 'oliere-paris' | 'redefine-matcha'
 
@@ -14,7 +15,7 @@ type BrandCard = {
   accent?: string // matcha pentru Redefine
 }
 
-const brands: BrandCard[] = [
+const allBrands: BrandCard[] = [
   {
     slug: 'aqua-mineral',
     name: 'Aqua Mineral',
@@ -36,8 +37,11 @@ const brands: BrandCard[] = [
   },
 ]
 
+// Doar brandurile vizibile public (vezi content/brand-visibility.ts)
+const brands = allBrands.filter((b) => isBrandPublic(b.slug))
+
 export function BrandTabs() {
-  const [active, setActive] = useState<BrandSlug>('aqua-mineral')
+  const [active, setActive] = useState<BrandSlug>(brands[0]?.slug ?? 'aqua-mineral')
   // Pe mobile pornim cu toate închise — utilizatorul vede întâi cele 3 opțiuni
   const [mobileOpen, setMobileOpen] = useState<BrandSlug | null>(null)
 
@@ -52,6 +56,11 @@ export function BrandTabs() {
 
   function toggleMobile(slug: BrandSlug) {
     setMobileOpen((curr) => (curr === slug ? null : slug))
+  }
+
+  // Un singur brand vizibil → fără selector, formularul direct
+  if (brands.length === 1) {
+    return <B2BForm brand={brands[0].slug} />
   }
 
   return (
