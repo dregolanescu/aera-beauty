@@ -45,16 +45,10 @@ const brands = [
   },
 ] as const
 
-// Doar brandurile vizibile public (vezi content/brand-visibility.ts)
+// Doar brandurile vizibile public (vezi content/brand-visibility.ts).
+// Grila rămâne pe 3 coloane: cu mai puține branduri, cardurile stau la stânga,
+// aliniate cu textul secțiunii de deasupra.
 const visibleBrands = brands.filter((b) => isBrandPublic(b.slug))
-
-// 3 branduri → 3 coloane, ca până acum; mai puține → centrate, fără coloane goale
-const gridCols =
-  visibleBrands.length >= 3
-    ? 'md:grid-cols-3'
-    : visibleBrands.length === 2
-      ? 'md:grid-cols-2 md:max-w-4xl md:mx-auto'
-      : 'md:max-w-md md:mx-auto'
 
 const cardShadow =
   '0 1px 3px rgba(61, 47, 37, 0.04), 0 8px 24px rgba(61, 47, 37, 0.03)'
@@ -67,7 +61,7 @@ export function BrandShowcase() {
   return (
     <section className="border-t border-stone-200">
       <div className="mx-auto max-w-7xl px-6 lg:px-12 py-24 md:py-32">
-        <div className={`grid grid-cols-1 ${gridCols} gap-6 lg:gap-8`}>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
           {visibleBrands.map((brand, i) => (
             <motion.div
               key={brand.name}

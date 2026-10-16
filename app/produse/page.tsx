@@ -6,15 +6,6 @@ import { Footer } from '@/components/layout/Footer'
 import { FadeIn } from '@/components/motion/FadeIn'
 import { publicBrands } from '@/content/products'
 
-// Grila se adaptează la numărul de branduri vizibile: 3 rămân pe 3 coloane,
-// mai puține se centrează (fără coloane goale când un brand e ascuns).
-const brandGridCols =
-  publicBrands.length >= 3
-    ? 'md:grid-cols-3'
-    : publicBrands.length === 2
-      ? 'md:grid-cols-2 md:max-w-4xl md:mx-auto'
-      : 'md:max-w-md md:mx-auto'
-
 export const metadata: Metadata = {
   title: 'Produse AERA Beauty',
   description:
@@ -57,7 +48,9 @@ export default function ProdusePage() {
         {/* Brand cards grid */}
         <section className="border-t border-stone-200">
           <div className="mx-auto max-w-7xl px-6 lg:px-12 py-24 md:py-32">
-            <div className={`grid grid-cols-1 ${brandGridCols} gap-6 lg:gap-8`}>
+            {/* Grila rămâne pe 3 coloane și cu mai puține branduri vizibile:
+                cardurile stau aliniate la stânga, cu textul de deasupra. */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
               {publicBrands.map((brand, i) => (
                 <FadeIn key={brand.slug} delay={i * 0.08}>
                   <Link
