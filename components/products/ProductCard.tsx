@@ -11,6 +11,8 @@ type Props = {
   product: Product
   brandName: string
   priority?: boolean
+  /** Afișează „În curând" când produsul nu are preț (brandul are listă de prețuri). */
+  priceSoonIfMissing?: boolean
 }
 
 /**
@@ -24,7 +26,12 @@ type Props = {
  * pixel-perfect în mod colapsat și expand-ul afectează doar cardul activ.
  */
 
-export function ProductCard({ product, brandName, priority = false }: Props) {
+export function ProductCard({
+  product,
+  brandName,
+  priority = false,
+  priceSoonIfMissing = false,
+}: Props) {
   const [expanded, setExpanded] = useState(false)
   const shouldReduce = useReducedMotion()
 
@@ -63,11 +70,18 @@ export function ProductCard({ product, brandName, priority = false }: Props) {
           style={{ minHeight: '1.5rem' }}
         >
           <p className="text-sm text-taupe-500">{product.volume ?? ' '}</p>
-          {product.price !== undefined && (
+          {product.price !== undefined ? (
             <p className="text-base font-medium text-cocoa-900 tabular-nums whitespace-nowrap">
               <span className="sr-only">Preț: </span>
               {formatPriceRon(product.price)}
             </p>
+          ) : (
+            priceSoonIfMissing && (
+              <p className="text-sm font-medium text-taupe-500 whitespace-nowrap">
+                <span className="sr-only">Preț: </span>
+                În curând
+              </p>
+            )
           )}
         </div>
 

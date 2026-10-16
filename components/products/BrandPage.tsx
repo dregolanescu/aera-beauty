@@ -14,6 +14,12 @@ type Props = {
 }
 
 export function BrandPage({ brand, belowHero }: Props) {
+  // Brandul are listă de prețuri → produsele fără preț afișează „În curând".
+  // Un brand fără niciun preț nu afișează nimic în locul prețului.
+  const hasPrices = brand.ranges.some((r) =>
+    r.products.some((p) => p.price !== undefined),
+  )
+
   return (
     <>
       <Header />
@@ -99,6 +105,7 @@ export function BrandPage({ brand, belowHero }: Props) {
                       product={product}
                       brandName={brand.name}
                       priority={ri === 0 && pi === 0}
+                      priceSoonIfMissing={hasPrices}
                     />
                   </FadeIn>
                 ))}
