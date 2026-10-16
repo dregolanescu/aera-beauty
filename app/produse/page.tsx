@@ -18,11 +18,11 @@ const brandGridCols =
 export const metadata: Metadata = {
   title: 'Produse AERA Beauty',
   description:
-    'Skincare cu minerale din Marea Moartă și haircare profesional cu uleiuri naturale și extract de matcha.',
+    'Skincare cu minerale din Marea Moartă prin Aqua Mineral, reprezentat de AERA Beauty în România.',
   openGraph: {
     title: 'Produse AERA Beauty',
     description:
-      'Skincare cu minerale din Marea Moartă și haircare profesional cu uleiuri naturale și extract de matcha.',
+      'Skincare cu minerale din Marea Moartă prin Aqua Mineral, reprezentat de AERA Beauty în România.',
     url: 'https://aerabeauty.ro/produse',
   },
 }
@@ -41,7 +41,7 @@ export default function ProdusePage() {
                 className="hero-title max-w-4xl"
                 style={{ color: 'var(--color-cocoa-700)' }}
               >
-                Trei branduri,
+                Selecție atentă,
                 <br />
                 <span style={{ fontStyle: 'italic' }}>aceeași rigoare.</span>
               </h1>

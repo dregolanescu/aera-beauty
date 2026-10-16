@@ -6,18 +6,15 @@ export function BrandsTransition() {
     <section className="border-t border-stone-200">
       <div className="mx-auto max-w-7xl px-6 lg:px-12 py-24 md:py-32">
         <FadeIn>
-          <p className="eyebrow mb-4">Trei direcții</p>
+          <p className="eyebrow mb-4">Portofoliu</p>
 
           <h2 className="section-title max-w-3xl">
-            Trei branduri. Trei direcții de îngrijire.
+            Ales cu grijă. Adus cu rigoare.
           </h2>
 
           <p className="body-large mt-8 max-w-3xl text-cocoa-700">
             AERA Beauty aduce în România un portofoliu concentrat de îngrijire
-            premium: skincare cu minerale din Marea Moartă prin Aqua Mineral,
-            haircare profesional cu uleiuri naturale prin Oliere Paris și o linie
-            modernă de îngrijire inspirată de energia matcha-ului prin Redefine
-            Matcha.
+            premium: skincare cu minerale din Marea Moartă, prin Aqua Mineral.
           </p>
 
           <div className="mt-10">
