@@ -9,6 +9,7 @@ import {
 } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { PrecomandaModal } from './PrecomandaModal'
+import { isBrandPublic } from '@/content/brand-visibility'
 
 type Prefill = {
   brand?: 'aqua-mineral' | 'oliere-paris' | 'redefine-matcha'
@@ -54,10 +55,13 @@ export function PrecomandaProvider({ children }: { children: React.ReactNode }) 
       redefine: 'redefine-matcha',
     }
 
+    const brand = brandMap[param]
+
     if (param === 'true') {
       open()
-    } else if (brandMap[param]) {
-      open({ brand: brandMap[param] })
+    } else if (brand && isBrandPublic(brand)) {
+      // Brandurile ascunse public (brand-visibility.ts) se tratează ca parametru necunoscut
+      open({ brand })
     }
   }, [searchParams, open])
 

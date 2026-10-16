@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Colaborează cu AERA Beauty',
     description:
-      'Parteneriate B2B pentru Aqua Mineral, Oliere Paris și Redefine Matcha în România.',
+      'Parteneriate B2B pentru Aqua Mineral în România.',
     url: 'https://aerabeauty.ro/colaboreaza',
   },
 }
@@ -25,7 +25,7 @@ const opportunities = [
   {
     eyebrow: 'Retail & farmacii',
     title: 'Listare în magazine și online',
-    body: 'Pentru retaileri de specialitate, lanțuri de farmacii sau platforme de beauty interesate să listeze gamele Aqua Mineral, Oliere Paris și Redefine Matcha.',
+    body: 'Pentru retaileri de specialitate, lanțuri de farmacii sau platforme de beauty interesate să listeze gamele Aqua Mineral.',
   },
   {
     eyebrow: 'Distribuție',
@@ -55,8 +55,8 @@ export default function ColaboreazaPage() {
                 </span>
               </h1>
               <p className="body-large mt-8 max-w-2xl text-cocoa-700">
-                AERA Beauty reprezintă în exclusivitate trei branduri premium
-                în România — Aqua Mineral, Oliere Paris și Redefine Matcha.
+                AERA Beauty reprezintă în exclusivitate în România brandul Aqua
+                Mineral — skincare premium cu minerale din Marea Moartă.
                 Suntem deschiși colaborărilor cu parteneri care împărtășesc
                 aceeași grijă pentru calitate, formulare curate și experiență
                 impecabilă pentru utilizatorul final.

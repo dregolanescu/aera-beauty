@@ -4,12 +4,15 @@ import { useState } from 'react'
 import Image from 'next/image'
 import { ChevronDown } from 'lucide-react'
 import { motion, useReducedMotion } from 'motion/react'
+import { formatPriceRon } from '@/lib/utils'
 import type { Product } from '@/content/products'
 
 type Props = {
   product: Product
   brandName: string
   priority?: boolean
+  /** Afișează „În curând" când produsul nu are preț (brandul are listă de prețuri). */
+  priceSoonIfMissing?: boolean
 }
 
 /**
@@ -23,7 +26,12 @@ type Props = {
  * pixel-perfect în mod colapsat și expand-ul afectează doar cardul activ.
  */
 
-export function ProductCard({ product, brandName, priority = false }: Props) {
+export function ProductCard({
+  product,
+  brandName,
+  priority = false,
+  priceSoonIfMissing = false,
+}: Props) {
   const [expanded, setExpanded] = useState(false)
   const shouldReduce = useReducedMotion()
 
@@ -56,13 +64,26 @@ export function ProductCard({ product, brandName, priority = false }: Props) {
           {product.name}
         </h3>
 
-        {/* Volume slot rezervat chiar dacă lipsește (evităm offset între carduri) */}
-        <p
-          className="text-sm text-taupe-500 mb-3"
-          style={{ minHeight: '1.25em' }}
+        {/* Volum + preț — rând rezervat chiar dacă lipsesc (evităm offset între carduri) */}
+        <div
+          className="flex items-baseline justify-between gap-4 mb-3"
+          style={{ minHeight: '1.5rem' }}
         >
-          {product.volume ?? ' '}
-        </p>
+          <p className="text-sm text-taupe-500">{product.volume ?? ' '}</p>
+          {product.price !== undefined ? (
+            <p className="text-base font-medium text-cocoa-900 tabular-nums whitespace-nowrap">
+              <span className="sr-only">Preț: </span>
+              {formatPriceRon(product.price)}
+            </p>
+          ) : (
+            priceSoonIfMissing && (
+              <p className="text-sm font-medium text-taupe-500 whitespace-nowrap">
+                <span className="sr-only">Preț: </span>
+                În curând
+              </p>
+            )
+          )}
+        </div>
 
         {/* Description — min ≈ 2 linii */}
         <p className="body text-cocoa-700" style={{ minHeight: '3.5em' }}>

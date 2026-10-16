@@ -4,16 +4,16 @@ import Image from 'next/image'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { FadeIn } from '@/components/motion/FadeIn'
-import { brands } from '@/content/products'
+import { publicBrands } from '@/content/products'
 
 export const metadata: Metadata = {
   title: 'Produse AERA Beauty',
   description:
-    'Skincare cu minerale din Marea Moartă și haircare profesional cu uleiuri naturale și extract de matcha.',
+    'Skincare cu minerale din Marea Moartă prin Aqua Mineral, reprezentat de AERA Beauty în România.',
   openGraph: {
     title: 'Produse AERA Beauty',
     description:
-      'Skincare cu minerale din Marea Moartă și haircare profesional cu uleiuri naturale și extract de matcha.',
+      'Skincare cu minerale din Marea Moartă prin Aqua Mineral, reprezentat de AERA Beauty în România.',
     url: 'https://aerabeauty.ro/produse',
   },
 }
@@ -32,7 +32,7 @@ export default function ProdusePage() {
                 className="hero-title max-w-4xl"
                 style={{ color: 'var(--color-cocoa-700)' }}
               >
-                Trei branduri,
+                Selecție atentă,
                 <br />
                 <span style={{ fontStyle: 'italic' }}>aceeași rigoare.</span>
               </h1>
@@ -48,8 +48,10 @@ export default function ProdusePage() {
         {/* Brand cards grid */}
         <section className="border-t border-stone-200">
           <div className="mx-auto max-w-7xl px-6 lg:px-12 py-24 md:py-32">
+            {/* Grila rămâne pe 3 coloane și cu mai puține branduri vizibile:
+                cardurile stau aliniate la stânga, cu textul de deasupra. */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-              {brands.map((brand, i) => (
+              {publicBrands.map((brand, i) => (
                 <FadeIn key={brand.slug} delay={i * 0.08}>
                   <Link
                     href={`/produse/${brand.slug}`}
