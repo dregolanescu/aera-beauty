@@ -15,6 +15,11 @@ export type Product = {
   closingPhrase?: string
   image: string
   volume?: string
+  /**
+   * Preț de vânzare cu amănuntul, în lei (RON), din lista clientului
+   * („Aqua Mineral Retail Prices", oct. 2026). Lipsă = fără preț afișat.
+   */
+  price?: number
 }
 
 export type ProductRange = {
@@ -102,6 +107,7 @@ export const brands: Brand[] = [
           {
             slug: 'daily-dewdrops-facial-cleanser',
             name: 'Daily Dewdrops Facial Cleanser',
+            price: 165,
             image: '/products/aqua/daily-dewdrops-facial-cleanser.jpg',
             description: 'Lapte de curățare delicat, primul pas pentru o rutină completă.',
             activeIngredients: 'Ulei de migdale dulci, ulei din sâmburi de struguri, ingrediente blânde de curățare.',
@@ -113,6 +119,7 @@ export const brands: Brand[] = [
           {
             slug: 'daily-dewdrops-facial-toner',
             name: 'Daily Dewdrops Facial Toner',
+            price: 165,
             image: '/products/aqua/daily-dewdrops-facial-toner.jpg',
             description: 'Toner de completare a curățării, pentru prospețime și echilibru.',
             activeIngredients: 'Aloe vera, ingrediente tonifiante, extracte botanice calmante.',
@@ -124,6 +131,7 @@ export const brands: Brand[] = [
           {
             slug: 'milky-facial-scrub',
             name: 'Milky Facial Scrub',
+            price: 174,
             image: '/products/aqua/milky-facial-scrub.jpg',
             description: 'Scrub facial blând pentru netezire și reîmprospătare.',
             activeIngredients: 'Dead Sea salts, pudră din sâmburi de caisă, aloe vera, mușețel, ulei de avocado, ulei de migdale.',
@@ -136,6 +144,7 @@ export const brands: Brand[] = [
             slug: 'clarity-peeling-gel',
             name: 'Clarity Peeling Gel',
             volume: '50 ml',
+            price: 291,
             image: '/products/aqua/clarity-peeling-gel.jpg',
             description: 'Peeling gel pentru claritate, luminozitate și textură rafinată.',
             activeIngredients: 'Dead Sea minerals, Dunaliella Salina, vitamina E, aloe vera, mușețel.',
@@ -155,6 +164,7 @@ export const brands: Brand[] = [
           {
             slug: 'youth-essence-serum',
             name: 'Youth Essence Serum',
+            price: 354,
             image: '/products/aqua/youth-essence-serum.jpg',
             description: 'Ser anti-aging pentru rutina young / 30+, glow și vitalitate.',
             activeIngredients: 'Dead Sea minerals, Dunaliella Salina, ingrediente anti-aging și revitalizante.',
@@ -167,6 +177,7 @@ export const brands: Brand[] = [
             slug: 'optima-hydrating-day-cream-dry',
             name: 'Optima Hydrating Day Cream',
             volume: 'Ten normal spre uscat',
+            price: 264,
             image: '/products/aqua/optima-hydrating-day-cream-dry.jpg',
             description: 'Cremă de zi pentru ten normal-uscat, hidratare și confort.',
             activeIngredients: 'Dead Sea minerals, Renovage™, ingrediente emoliente și hidratante.',
@@ -179,6 +190,7 @@ export const brands: Brand[] = [
             slug: 'optima-hydrating-day-cream-oily',
             name: 'Optima Hydrating Day Cream',
             volume: 'Ten normal spre gras',
+            price: 264,
             image: '/products/aqua/optima-hydrating-day-cream-oily.jpg',
             description: 'Cremă de zi pentru ten normal-gras, hidratare echilibrată.',
             activeIngredients: 'Dead Sea minerals, Renovage™, ingrediente hidratante cu textură potrivită tenului mixt/gras.',
@@ -201,6 +213,7 @@ export const brands: Brand[] = [
           {
             slug: 'uplift-firming-eye-gel',
             name: 'Uplift Firming Eye Gel',
+            price: 273,
             image: '/products/aqua/uplift-firming-eye-gel.jpg',
             description: 'Gel pentru conturul ochilor, cu senzație de fermitate și prospețime.',
             activeIngredients: 'Dead Sea minerals, ingrediente cu efect de fermitate și decongestionare.',
@@ -221,6 +234,7 @@ export const brands: Brand[] = [
             slug: 'extensor-deep-lifting-mask',
             name: 'Extensor Deep Lifting Mask',
             volume: '50 ml',
+            price: 318,
             image: '/products/aqua/extensor-deep-lifting-mask.jpg',
             description: 'Mască premium pentru lifting vizibil și rafinare.',
             activeIngredients: 'Tightenex™, Dead Sea minerals, active cu efect de tightening.',
@@ -233,6 +247,7 @@ export const brands: Brand[] = [
             slug: 'juveness-de-wrinkle-cream',
             name: 'Juveness De-Wrinkle Cream',
             volume: '50 ml',
+            price: 435,
             image: '/products/aqua/juveness-de-wrinkle-cream.jpg',
             description: 'Cremă premium anti-rid pentru piele cu aspect neted.',
             activeIngredients: 'Renovage™, Dead Sea minerals, ingrediente anti-aging.',
@@ -256,6 +271,7 @@ export const brands: Brand[] = [
           {
             slug: 'puffiness-eraser',
             name: 'Puffiness Eraser',
+            price: 417,
             image: '/products/aqua/puffiness-eraser.jpg',
             description: 'Tratament instant pentru zona ochilor, produs hero de demo.',
             activeIngredients: 'Eyeliss™, peptide, active pentru pungi / contur ochi.',
@@ -300,6 +316,7 @@ export const brands: Brand[] = [
             slug: 'supreme-face-serum',
             name: 'Supreme Face Serum',
             volume: '40 ml',
+            price: 444,
             image: '/products/aqua/supreme-face-serum.jpg',
             description: 'Cremă premium pentru piele matură, confort și protecție.',
             activeIngredients: 'Resistem™, capsule vitamina E, ingrediente hidratante și antioxidante.',
@@ -332,6 +349,7 @@ export const brands: Brand[] = [
             slug: '24k-intensive-eye-cream',
             name: '24K Intensive Eye Cream',
             volume: '30 ml',
+            price: 408,
             image: '/products/aqua/24k-intensive-eye-cream.jpg',
             description: 'Mască statement pentru glow auriu și fermitate.',
             activeIngredients: '24K gold, Tightenex™, uleiuri calmante, ingrediente nutritive.',
@@ -344,6 +362,7 @@ export const brands: Brand[] = [
             slug: '24k-intensive-face-cream',
             name: '24K Intensive Face Cream',
             volume: '50 ml',
+            price: 471,
             image: '/products/aqua/24k-intensive-face-cream.jpg',
             description: 'Ser luxos pentru fermitate, glow și rafinare.',
             activeIngredients: '24K gold, Tightenex™, antioxidanți, vitamina C, ulei din sâmburi de struguri.',
@@ -356,6 +375,7 @@ export const brands: Brand[] = [
             slug: '24k-intensive-face-serum',
             name: '24K Intensive Face Serum',
             volume: '30 ml',
+            price: 534,
             image: '/products/aqua/24k-intensive-face-serum.jpg',
             description: 'Cremă premium pentru fermitate și luminozitate.',
             activeIngredients: '24K gold, Tightenex™, vitamina E, calendula, ingrediente nutritive.',
@@ -368,6 +388,7 @@ export const brands: Brand[] = [
             slug: '24k-intensive-mask',
             name: '24K Intensive Mask',
             volume: '50 ml',
+            price: 597,
             image: '/products/aqua/24k-intensive-mask.jpg',
             description: 'Cremă luxoasă pentru conturul ochilor.',
             activeIngredients: 'Tightenex™, shea butter, aloe vera, ingrediente pentru netezire.',
@@ -387,6 +408,7 @@ export const brands: Brand[] = [
           {
             slug: 'smart-delivery-facial-cream',
             name: 'Smart Delivery Facial Cream',
+            price: 624,
             image: '/products/aqua/smart-delivery-facial-cream.jpg',
             description: 'Cremă avansată cu tehnologii smart delivery pentru netezire.',
             activeIngredients: 'X50® Hyalufiller™, CollaPlant Z NPNF®, delivery peptide complex.',
@@ -398,6 +420,7 @@ export const brands: Brand[] = [
           {
             slug: 'smart-delivery-leave-on-mask',
             name: 'Smart Delivery Leave-On Mask',
+            price: 678,
             image: '/products/aqua/smart-delivery-leave-on-mask.jpg',
             description: 'Mască leave-on cu acțiune avansată pentru hidratare și revitalizare.',
             activeIngredients: 'X50® Hyalufiller™, PhytoCellTec™ Argan, CollaPlant Z NPNF®, activ din celule stem vegetale de argan.',
@@ -409,6 +432,7 @@ export const brands: Brand[] = [
           {
             slug: 'timeless-glow-wrinkle-filler',
             name: 'Timeless Glow Wrinkle Filler',
+            price: 696,
             image: '/products/aqua/timeless-glow-wrinkle-filler.jpg',
             description: 'Filler cosmetic instant pentru riduri și linii de expresie.',
             activeIngredients: 'Hyaluronic Filling Spheres™, microsfere cu efect de filling, acid hialuronic.',
@@ -428,6 +452,7 @@ export const brands: Brand[] = [
           {
             slug: 'fountain-of-youth-booster',
             name: 'Fountain of Youth Serum Booster',
+            price: 345,
             image: '/products/aqua/fountain-of-youth-booster.jpg',
             description: 'Booster pentru glow, uniformitate și glass skin.',
             activeIngredients: 'Crystalide™ peptide, ingrediente pentru claritate și luminozitate.',
@@ -439,6 +464,7 @@ export const brands: Brand[] = [
           {
             slug: 'turn-back-time-booster',
             name: 'Turn Back Time Serum Booster',
+            price: 426,
             image: '/products/aqua/turn-back-time-booster.jpg',
             description: 'Booster pentru textură, pori și aspect satinat.',
             activeIngredients: 'PoreTect™, ciclopeptide din semințe de in și țelină.',
@@ -450,6 +476,7 @@ export const brands: Brand[] = [
           {
             slug: 'optima-plus-supreme-booster',
             name: 'Optima+ Supreme Serum Booster',
+            price: 390,
             image: '/products/aqua/optima-plus-supreme-booster.jpg',
             description: 'Booster pentru reînnoire blândă și aspect proaspăt.',
             activeIngredients: 'Keratoline™, Dead Sea water, ingrediente calmante.',
@@ -461,6 +488,7 @@ export const brands: Brand[] = [
           {
             slug: 'light-and-bright-booster',
             name: 'Light & Bright Serum Booster',
+            price: 408,
             image: '/products/aqua/light-and-bright-booster.jpg',
             description: 'Booster pentru luminozitate și uniformizare.',
             activeIngredients: 'Mediatone™, octadecenediotic acid purificat, activ pentru controlul aspectului de pigmentare.',
@@ -480,6 +508,7 @@ export const brands: Brand[] = [
           {
             slug: 'sheet-mask-detox',
             name: 'Sheet Mask Detox',
+            price: 57,
             image: '/products/aqua/sheet-mask-detox.jpg',
             description: 'Sheet mask cu efect detox, pentru pori curățați în profunzime și un ten vizibil mai clar.',
             activeIngredients: 'Magnez activ, kaolin, Dead Sea minerals, hyaluronic acid.',
@@ -491,6 +520,7 @@ export const brands: Brand[] = [
           {
             slug: 'sheet-mask-gold-24k',
             name: 'Sheet Mask Gold 24K',
+            price: 57,
             image: '/products/aqua/sheet-mask-gold-24k.jpg',
             description: 'Sheet mask premium cu particule de aur 24K, pentru un glow auriu și fermitate vizibilă într-un singur pas.',
             activeIngredients: '24K gold, hyaluronic acid, Dead Sea minerals, peptide tightening.',
