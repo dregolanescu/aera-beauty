@@ -1,10 +1,16 @@
 /**
  * HTML email template: confirmation → user
  * Warm, short, editorial. AERA palette + Georgia/Helvetica fallback.
+ *
+ * Emailul pleacă spre adresa introdusă în formular, deci salutul folosește
+ * prenumele doar dacă arată a nume (vezi greetingFirstName).
  */
 
+import { escapeHtml, greetingFirstName } from './escape'
+
 export function buildUserConfirmationHtml(name: string): string {
-  const firstName = name.split(/\s+/)[0]
+  const firstName = greetingFirstName(name)
+  const greeting = firstName ? `Mulțumim, ${escapeHtml(firstName)}.` : 'Mulțumim.'
 
   return `<!DOCTYPE html>
 <html lang="ro">
@@ -26,7 +32,7 @@ export function buildUserConfirmationHtml(name: string): string {
   <!-- Body -->
   <tr><td style="padding:28px 32px;">
     <p style="margin:0 0 16px;font-size:16px;line-height:1.6;">
-      Mulțumim, ${firstName}. Am primit cererea ta și revenim în maximum 48 de ore lucrătoare cu informații despre produs, preț și disponibilitate.
+      ${greeting} Am primit cererea ta și revenim în maximum 48 de ore lucrătoare cu informații despre produs, preț și disponibilitate.
     </p>
     <p style="margin:0 0 24px;font-size:16px;line-height:1.6;">
       Între timp, poți descoperi colecțiile AERA.
