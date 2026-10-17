@@ -3,7 +3,11 @@
  * Inline styles only (email client compatibility).
  * Palette: cream-100 outer, ivory-50 container, cocoa-700 text.
  * Font fallback: Georgia (serif), Helvetica (sans).
+ *
+ * Toate valorile venite din formular sunt escapate (vezi ./escape).
  */
+
+import { escapeHtml, headerText, telHref } from './escape'
 
 type LeadData = {
   name: string
@@ -28,9 +32,18 @@ const brandLabels: Record<string, string> = {
 }
 
 export function buildLeadNotificationHtml(data: LeadData): string {
-  const brandLabel = brandLabels[data.brand] ?? data.brand
-  const waLink = data.phone
-    ? `https://wa.me/${data.phone.replace(/\D/g, '')}?text=${encodeURIComponent('Salut, ne-ai contactat prin aerabeauty.ro. Revenim cu detalii.')}`
+  const brandName = brandLabels[data.brand] ?? data.brand
+  const brandLabel = escapeHtml(brandName)
+  const name = escapeHtml(data.name)
+  const email = escapeHtml(data.email)
+  const phone = escapeHtml(data.phone)
+  const tel = telHref(data.phone)
+  const city = escapeHtml(data.city)
+  const product = escapeHtml(data.product)
+  const message = escapeHtml(data.message)
+  const waDigits = data.phone.replace(/\D/g, '')
+  const waLink = waDigits
+    ? `https://wa.me/${waDigits}?text=${encodeURIComponent('Salut, ne-ai contactat prin aerabeauty.ro. Revenim cu detalii.')}`
     : ''
 
   return `<!DOCTYPE html>
@@ -45,7 +58,7 @@ export function buildLeadNotificationHtml(data: LeadData): string {
   <tr><td style="padding:28px 32px 20px;border-bottom:1px solid #E8DFD3;">
     <img src="https://aerabeauty.ro/logo/aera-beauty-mocha.png" alt="AERA Beauty" width="140" style="display:block;width:140px;height:auto;margin:0 0 16px;border:0;outline:none;text-decoration:none;">
     <p style="margin:0 0 4px;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.14em;color:#8C7567;">Lead nou</p>
-    <p style="margin:0;font-family:Georgia,serif;font-size:22px;color:#3D2F25;">${data.name}</p>
+    <p style="margin:0;font-family:Georgia,serif;font-size:22px;color:#3D2F25;">${name}</p>
   </td></tr>
 
   <!-- Contact highlight -->
@@ -53,13 +66,13 @@ export function buildLeadNotificationHtml(data: LeadData): string {
     <table width="100%" cellpadding="0" cellspacing="0">
       <tr>
         <td style="padding:0 0 8px;">
-          <a href="mailto:${data.email}" style="color:#5B4638;font-size:16px;text-decoration:underline;">${data.email}</a>
+          <a href="mailto:${email}" style="color:#5B4638;font-size:16px;text-decoration:underline;">${email}</a>
         </td>
       </tr>
       ${data.phone ? `<tr><td style="padding:0 0 8px;">
-        <a href="tel:${data.phone}" style="color:#5B4638;font-size:16px;text-decoration:underline;">${data.phone}</a>
+        ${tel ? `<a href="tel:${tel}" style="color:#5B4638;font-size:16px;text-decoration:underline;">${phone}</a>` : `<span style="color:#5B4638;font-size:16px;">${phone}</span>`}
       </td></tr>` : ''}
-      ${data.city ? `<tr><td style="padding:0 0 8px;font-size:14px;color:#8C7567;">${data.city}</td></tr>` : ''}
+      ${data.city ? `<tr><td style="padding:0 0 8px;font-size:14px;color:#8C7567;">${city}</td></tr>` : ''}
     </table>
   </td></tr>
 
@@ -72,11 +85,11 @@ export function buildLeadNotificationHtml(data: LeadData): string {
       </tr>
       ${data.product ? `<tr>
         <td style="padding:10px 0;border-top:1px solid #E8DFD3;color:#8C7567;vertical-align:top;">Produs / gamă</td>
-        <td style="padding:10px 0;border-top:1px solid #E8DFD3;color:#3D2F25;">${data.product}</td>
+        <td style="padding:10px 0;border-top:1px solid #E8DFD3;color:#3D2F25;">${product}</td>
       </tr>` : ''}
       ${data.message ? `<tr>
         <td style="padding:10px 0;border-top:1px solid #E8DFD3;color:#8C7567;vertical-align:top;">Mesaj</td>
-        <td style="padding:10px 0;border-top:1px solid #E8DFD3;color:#3D2F25;white-space:pre-wrap;">${data.message}</td>
+        <td style="padding:10px 0;border-top:1px solid #E8DFD3;color:#3D2F25;white-space:pre-wrap;">${message}</td>
       </tr>` : ''}
       <tr>
         <td style="padding:10px 0;border-top:1px solid #E8DFD3;color:#8C7567;vertical-align:top;">Marketing</td>
@@ -94,7 +107,7 @@ export function buildLeadNotificationHtml(data: LeadData): string {
     <table cellpadding="0" cellspacing="0">
       <tr>
         <td style="padding-right:12px;">
-          <a href="mailto:${data.email}?subject=${encodeURIComponent(`Re: precomanda ta AERA — ${brandLabel}`)}" style="display:inline-block;padding:10px 20px;background:#5B4638;color:#FBF7F0;font-family:Tahoma,Verdana,Arial,sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;text-decoration:none;border-radius:6px;">R&#258;spunde</a>
+          <a href="mailto:${email}?subject=${encodeURIComponent(`Re: precomanda ta AERA — ${brandName}`)}" style="display:inline-block;padding:10px 20px;background:#5B4638;color:#FBF7F0;font-family:Tahoma,Verdana,Arial,sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;text-decoration:none;border-radius:6px;">R&#258;spunde</a>
         </td>
         ${waLink ? `<td style="padding-right:12px;">
           <a href="${waLink}" style="display:inline-block;padding:10px 20px;background:transparent;color:#5B4638;font-family:Tahoma,Verdana,Arial,sans-serif;font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;text-decoration:none;border-radius:6px;border:1px solid #5B4638;">WhatsApp</a>
@@ -120,5 +133,6 @@ export function buildLeadNotificationSubject(name: string, brand: string): strin
   // ASCII-safe separators. Em-dash and middle-dot cause encoding glitches
   // (â€" and Â·) in some mail clients (Microsoft Outlook) when the SMTP
   // Subject header isn't MIME-encoded as quoted-printable / base64.
-  return `Lead nou: ${name} (${brandLabel})`
+  // Numele trece prin headerText: un singur rând, fără caractere de control.
+  return `Lead nou: ${headerText(name)} (${brandLabel})`
 }

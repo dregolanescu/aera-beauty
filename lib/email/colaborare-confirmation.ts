@@ -1,17 +1,22 @@
 /**
  * HTML email template: confirmation B2B → user
  * Warm, short, editorial. AERA palette + Tahoma stack.
+ *
+ * Emailul pleacă spre adresa introdusă în formular, deci salutul folosește
+ * prenumele doar dacă arată a nume (vezi greetingFirstName).
  */
 
 import { colaborareConfigs } from '@/content/colaborare-forms'
+import { escapeHtml, greetingFirstName } from './escape'
 
 export function buildColaborareConfirmationHtml(
   name: string,
   brand: 'aqua-mineral' | 'oliere-paris' | 'redefine-matcha',
 ): string {
-  const firstName = name.split(/\s+/)[0]
+  const firstName = greetingFirstName(name)
+  const greeting = firstName ? `Mul&#355;umim, ${escapeHtml(firstName)}.` : 'Mul&#355;umim.'
   const cfg = colaborareConfigs[brand]
-  const brandLabel = cfg.name
+  const brandLabel = escapeHtml(cfg.name)
 
   return `<!DOCTYPE html>
 <html lang="ro">
@@ -33,7 +38,7 @@ export function buildColaborareConfirmationHtml(
   <!-- Body -->
   <tr><td style="padding:28px 32px;">
     <p style="margin:0 0 16px;font-size:16px;line-height:1.6;">
-      Mul&#355;umim, ${firstName}. Am primit cererea ta pentru o colaborare cu <strong>${brandLabel}</strong> &#537;i revenim &#238;n maximum 48 de ore lucr&#259;toare cu detalii despre gam&#259;, condi&#355;ii comerciale &#537;i pa&#537;ii urm&#259;tori.
+      ${greeting} Am primit cererea ta pentru o colaborare cu <strong>${brandLabel}</strong> &#537;i revenim &#238;n maximum 48 de ore lucr&#259;toare cu detalii despre gam&#259;, condi&#355;ii comerciale &#537;i pa&#537;ii urm&#259;tori.
     </p>
     <p style="margin:0 0 24px;font-size:16px;line-height:1.6;">
       &#206;ntre timp, po&#355;i descoperi colec&#355;iile AERA.

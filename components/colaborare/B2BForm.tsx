@@ -2,13 +2,20 @@
 
 import { useState, useRef, useEffect, type FormEvent } from 'react'
 import Link from 'next/link'
+import { Turnstile, type TurnstileHandle } from '@/components/forms/Turnstile'
+import { submitColaborare } from '@/app/actions/colaborare'
+import { suggestEmail } from '@/lib/email-typo'
+import { FIELD_LIMITS } from '@/lib/form-limits'
+import {
+  TURNSTILE_ACTIONS,
+  TURNSTILE_FIELD,
+  TURNSTILE_INTERACTION_MESSAGE,
+} from '@/lib/turnstile-config'
 import {
   colaborareConfigs,
   followUpOptions,
   type BrandColaborareConfig,
 } from '@/content/colaborare-forms'
-import { submitColaborare } from '@/app/actions/colaborare'
-import { suggestEmail } from '@/lib/email-typo'
 
 type Props = {
   brand: 'aqua-mineral' | 'oliere-paris' | 'redefine-matcha'
@@ -52,6 +59,7 @@ export function B2BForm({ brand }: Props) {
 
   const formRef = useRef<HTMLFormElement>(null)
   const successRef = useRef<HTMLDivElement>(null)
+  const turnstileRef = useRef<TurnstileHandle>(null)
 
   // Scroll la confirmare după trimitere reușită
   useEffect(() => {
@@ -121,6 +129,17 @@ export function B2BForm({ brand }: Props) {
     setServerError('')
 
     const fd = new FormData(e.currentTarget)
+
+    // Anti-bot: tokenul Turnstile (dacă e configurat) pleacă împreună cu formularul.
+    const turnstile = turnstileRef.current
+    const token = turnstile ? await turnstile.getToken() : null
+    if (!token && turnstile?.needsInteraction()) {
+      setStatus('error')
+      setServerError(TURNSTILE_INTERACTION_MESSAGE)
+      return
+    }
+    if (token) fd.set(TURNSTILE_FIELD, token)
+
     const result = await submitColaborare(fd)
 
     if (result.ok) {
@@ -133,6 +152,8 @@ export function B2BForm({ brand }: Props) {
       setGdpr(false)
       setMessageLen(0)
     } else {
+      // Tokenul e de unică folosință: cerem unul nou pentru următoarea încercare.
+      turnstile?.reset()
       setStatus('error')
       const errs = result.fieldErrors ?? {}
       setFieldErrors(errs)
@@ -233,6 +254,7 @@ export function B2BForm({ brand }: Props) {
               name="name"
               type="text"
               required
+              maxLength={FIELD_LIMITS.name}
               value={name}
               onChange={(e) => { setName(e.target.value); clearFieldError('name') }}
               className={inputCls('name')}
@@ -248,6 +270,7 @@ export function B2BForm({ brand }: Props) {
               name="email"
               type="email"
               required
+              maxLength={FIELD_LIMITS.email}
               value={email}
               onChange={(e) => { setEmail(e.target.value); clearFieldError('email'); setEmailSuggestion('') }}
               onBlur={() => setEmailSuggestion(suggestEmail(email) ?? '')}
@@ -278,6 +301,7 @@ export function B2BForm({ brand }: Props) {
               id={`${brand}-phone`}
               name="phone"
               type="tel"
+              maxLength={FIELD_LIMITS.phone}
               className={inputCls('phone')}
               placeholder="+40 7XX XXX XXX"
             />
@@ -288,6 +312,7 @@ export function B2BForm({ brand }: Props) {
               id={`${brand}-city`}
               name="city"
               type="text"
+              maxLength={FIELD_LIMITS.city}
               className={inputCls('city')}
               placeholder="București, Cluj, etc."
             />
@@ -323,6 +348,7 @@ export function B2BForm({ brand }: Props) {
             <input
               type="text"
               name="profileOther"
+              maxLength={FIELD_LIMITS.profileOther}
               placeholder="Specifică profilul tău"
               className={inputCls('profileOther')}
             />
@@ -473,6 +499,9 @@ export function B2BForm({ brand }: Props) {
         </label>
       </section>
 
+      {/* Verificare anti-bot (invizibilă, apare doar dacă e nevoie) */}
+      <Turnstile ref={turnstileRef} action={TURNSTILE_ACTIONS.colaborare} />
+
       {/* Submit */}
       <div className="flex flex-col gap-4">
         <button
@@ -493,6 +522,14 @@ export function B2BForm({ brand }: Props) {
             {status === 'submitting' ? 'Se trimite...' : `Trimite cererea — ${cfg.name}`}
           </span>
         </button>
+
+        {/* Erori care nu țin de un câmp (anti-bot, prea multe încercări): lângă buton,
+            unde se uită vizitatorul. Cele de câmp apar în bannerul de sus. */}
+        {status === 'error' && serverError && !hasErrors && (
+          <div role="alert">
+            <ErrorMsg>{serverError}</ErrorMsg>
+          </div>
+        )}
 
         {/* Hint: ce mai trebuie completat ca să se activeze butonul */}
         {missingFields.length > 0 && status !== 'submitting' && (

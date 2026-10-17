@@ -16,11 +16,13 @@ import { HIDDEN_BRANDS } from './content/brand-visibility'
 // CSP în mod report-only — pragmatic pentru Next.js (permite inline scripts pentru hydration)
 const cspReportOnly = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live https://*.vercel.live",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live https://*.vercel.live https://challenges.cloudflare.com",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
   "connect-src 'self' https://vercel.live https://*.vercel.app https://api.resend.com https://*.supabase.co wss://*.supabase.co https://*.sentry.io https://*.ingest.sentry.io https://*.ingest.us.sentry.io",
+  // Cloudflare Turnstile (anti-bot pe formulare) rulează într-un iframe; vercel.live = toolbar-ul de preview
+  "frame-src 'self' https://challenges.cloudflare.com https://vercel.live",
   "frame-ancestors 'none'",
   "form-action 'self'",
   "base-uri 'self'",
