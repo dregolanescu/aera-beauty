@@ -4,8 +4,15 @@ import { useEffect, useRef, useState, useCallback, type FormEvent } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react'
 import { X } from 'lucide-react'
+import { Turnstile, type TurnstileHandle } from '@/components/forms/Turnstile'
 import { submitPrecomanda, type PrecomandaResult } from '@/app/actions/precomanda'
 import { suggestEmail } from '@/lib/email-typo'
+import { FIELD_LIMITS } from '@/lib/form-limits'
+import {
+  TURNSTILE_ACTIONS,
+  TURNSTILE_FIELD,
+  TURNSTILE_INTERACTION_MESSAGE,
+} from '@/lib/turnstile-config'
 import { isBrandPublic } from '@/content/brand-visibility'
 
 type Prefill = {
@@ -43,6 +50,7 @@ export function PrecomandaModal({ isOpen, onClose, prefill }: Props) {
   const panelRef = useRef<HTMLDivElement>(null)
   const closeRef = useRef<HTMLButtonElement>(null)
   const triggerRef = useRef<HTMLElement | null>(null)
+  const turnstileRef = useRef<TurnstileHandle>(null)
 
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
@@ -138,12 +146,25 @@ export function PrecomandaModal({ isOpen, onClose, prefill }: Props) {
     setStatus('submitting')
 
     const fd = new FormData(e.currentTarget)
+
+    // Anti-bot: tokenul Turnstile (dacă e configurat) pleacă împreună cu formularul.
+    const turnstile = turnstileRef.current
+    const token = turnstile ? await turnstile.getToken() : null
+    if (!token && turnstile?.needsInteraction()) {
+      setStatus('error')
+      setServerError(TURNSTILE_INTERACTION_MESSAGE)
+      return
+    }
+    if (token) fd.set(TURNSTILE_FIELD, token)
+
     const result: PrecomandaResult = await submitPrecomanda(fd)
 
     if (result.ok) {
       setSentEmail(email)
       setStatus('success')
     } else {
+      // Tokenul e de unică folosință: cerem unul nou pentru următoarea încercare.
+      turnstile?.reset()
       setStatus('error')
       setServerError(result.error)
       if ('fieldErrors' in result && result.fieldErrors) {
@@ -289,6 +310,7 @@ export function PrecomandaModal({ isOpen, onClose, prefill }: Props) {
                         name="name"
                         type="text"
                         required
+                        maxLength={FIELD_LIMITS.name}
                         placeholder="Maria Popescu"
                         className={inputClass}
                         style={fieldErrors.name ? { borderColor: '#A32D2D' } : undefined}
@@ -308,6 +330,7 @@ export function PrecomandaModal({ isOpen, onClose, prefill }: Props) {
                         name="email"
                         type="email"
                         required
+                        maxLength={FIELD_LIMITS.email}
                         placeholder="maria@exemplu.ro"
                         className={inputClass}
                         style={fieldErrors.email ? { borderColor: '#A32D2D' } : undefined}
@@ -341,6 +364,7 @@ export function PrecomandaModal({ isOpen, onClose, prefill }: Props) {
                           id="pc-phone"
                           name="phone"
                           type="tel"
+                          maxLength={FIELD_LIMITS.phone}
                           placeholder="+40 7__ ___ ___"
                           className={inputClass}
                         />
@@ -353,6 +377,7 @@ export function PrecomandaModal({ isOpen, onClose, prefill }: Props) {
                           id="pc-city"
                           name="city"
                           type="text"
+                          maxLength={FIELD_LIMITS.city}
                           placeholder="București"
                           className={inputClass}
                         />
@@ -391,6 +416,7 @@ export function PrecomandaModal({ isOpen, onClose, prefill }: Props) {
                         id="pc-product"
                         name="product"
                         type="text"
+                        maxLength={FIELD_LIMITS.product}
                         placeholder="Youth Essence Serum"
                         className={inputClass}
                         defaultValue={prefill?.product ?? ''}
@@ -463,25 +489,28 @@ export function PrecomandaModal({ isOpen, onClose, prefill }: Props) {
                       </p>
                     )}
 
-                    {/* Submit */}
-                    <button
-                      type="submit"
-                      disabled={!canSubmit || status === 'submitting'}
-                      className="aera-cta-wrap w-full disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none"
-                    >
-                      <span className="aera-cta-halo" aria-hidden="true" />
-                      <span
-                        className="aera-cta-face w-full"
-                        style={{
-                          fontSize: '0.78rem',
-                          letterSpacing: '0.10em',
-                          padding: '14px 32px',
-                          minHeight: '46px',
-                        }}
+                    {/* Submit + verificarea anti-bot (invizibilă, apare doar dacă e nevoie) */}
+                    <div>
+                      <Turnstile ref={turnstileRef} action={TURNSTILE_ACTIONS.precomanda} />
+                      <button
+                        type="submit"
+                        disabled={!canSubmit || status === 'submitting'}
+                        className="aera-cta-wrap w-full disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none"
                       >
-                        {status === 'submitting' ? 'Se trimite...' : 'Trimite cererea'}
-                      </span>
-                    </button>
+                        <span className="aera-cta-halo" aria-hidden="true" />
+                        <span
+                          className="aera-cta-face w-full"
+                          style={{
+                            fontSize: '0.78rem',
+                            letterSpacing: '0.10em',
+                            padding: '14px 32px',
+                            minHeight: '46px',
+                          }}
+                        >
+                          {status === 'submitting' ? 'Se trimite...' : 'Trimite cererea'}
+                        </span>
+                      </button>
+                    </div>
                   </motion.form>
                 )}
               </AnimatePresence>

@@ -8,6 +8,13 @@ import * as Sentry from '@sentry/nextjs'
 import { getSupabase } from '@/lib/supabase'
 import { checkRateLimit } from '@/lib/ratelimit'
 import { domainAcceptsEmail } from '@/lib/email-mx'
+import { CHOICE_LIMITS, FIELD_LIMITS } from '@/lib/form-limits'
+import { verifyTurnstile } from '@/lib/turnstile'
+import {
+  TURNSTILE_ACTIONS,
+  TURNSTILE_ERROR_MESSAGE,
+  TURNSTILE_FIELD,
+} from '@/lib/turnstile-config'
 import {
   buildColaborareNotificationHtml,
   buildColaborareNotificationSubject,
@@ -16,6 +23,13 @@ import { buildColaborareConfirmationHtml } from '@/lib/email/colaborare-confirma
 
 const GDPR_CONSENT_VERSION = 'v1-2026-05'
 
+/** Opțiuni bifate (interes, produse, beneficii): valori scurte, număr limitat. */
+const choices = z
+  .array(z.string().max(CHOICE_LIMITS.value, 'Selecție invalidă'))
+  .max(CHOICE_LIMITS.count, 'Selecție invalidă')
+  .optional()
+  .default([])
+
 const schema = z.object({
   brand: z.enum(['aqua-mineral', 'oliere-paris', 'redefine-matcha'], {
     message: 'Brand invalid',
@@ -23,18 +37,40 @@ const schema = z.object({
   name: z
     .string()
     .min(3, 'Numele este obligatoriu')
+    .max(FIELD_LIMITS.name, `Numele poate avea maximum ${FIELD_LIMITS.name} de caractere`)
     .refine(
       (val) => val.trim().split(/\s+/).length >= 2,
       'Te rugăm să introduci numele și prenumele',
     ),
-  email: z.string().email('Format email invalid'),
-  phone: z.string().optional().default(''),
-  city: z.string().optional().default(''),
-  profile: z.string().min(1, 'Selectează profilul'),
-  profileOther: z.string().optional().default(''),
-  interest: z.array(z.string()).optional().default([]),
-  products: z.array(z.string()).optional().default([]),
-  benefits: z.array(z.string()).optional().default([]),
+  email: z
+    .string()
+    .max(FIELD_LIMITS.email, 'Adresa de email este prea lungă')
+    .email('Format email invalid'),
+  phone: z
+    .string()
+    .max(FIELD_LIMITS.phone, `Telefonul poate avea maximum ${FIELD_LIMITS.phone} de caractere`)
+    .optional()
+    .default(''),
+  city: z
+    .string()
+    .max(FIELD_LIMITS.city, `Orașul poate avea maximum ${FIELD_LIMITS.city} de caractere`)
+    .optional()
+    .default(''),
+  profile: z
+    .string()
+    .min(1, 'Selectează profilul')
+    .max(CHOICE_LIMITS.value, 'Selectează profilul'),
+  profileOther: z
+    .string()
+    .max(
+      FIELD_LIMITS.profileOther,
+      `Profilul poate avea maximum ${FIELD_LIMITS.profileOther} de caractere`,
+    )
+    .optional()
+    .default(''),
+  interest: choices,
+  products: choices,
+  benefits: choices,
   followUp: z.enum(['whatsapp', 'email', 'telefon'], {
     message: 'Selectează modalitatea de follow-up',
   }),
@@ -46,7 +82,7 @@ const schema = z.object({
   gdprConsent: z.literal('on', {
     message: 'Acordul GDPR este obligatoriu',
   }),
-  marketingOptIn: z.string().optional(),
+  marketingOptIn: z.string().max(10).optional(),
 })
 
 export type ColaborareResult =
@@ -81,8 +117,9 @@ export async function submitColaborare(
   raw.interest = collectArray(formData, 'interest')
   raw.products = collectArray(formData, 'products')
   raw.benefits = collectArray(formData, 'benefits')
-  // Eliminăm câmpul honeypot înainte de parse (nu e în schema Zod)
+  // Eliminăm honeypot-ul și tokenul Turnstile înainte de parse (nu sunt în schema Zod)
   delete raw.website
+  delete raw[TURNSTILE_FIELD]
 
   const parsed = schema.safeParse(raw)
 
@@ -121,6 +158,16 @@ export async function submitColaborare(
     }
   }
   const marketingOptIn = d.marketingOptIn === 'on'
+
+  // 1.55. Anti-bot Cloudflare Turnstile (activ doar cu ambele chei setate)
+  const human = await verifyTurnstile(formData.get(TURNSTILE_FIELD), {
+    action: TURNSTILE_ACTIONS.colaborare,
+    ip: rawIp,
+  })
+  if (!human.ok) {
+    console.warn('[turnstile] Blocked colaborare from', ipHashed, '—', human.reason)
+    return { ok: false, error: TURNSTILE_ERROR_MESSAGE }
+  }
 
   // 1.6. Verificare domeniu email (MX) — respinge domenii care nu primesc email.
   //      Fail-open: un lookup DNS neconcludent nu blochează lead-ul.
