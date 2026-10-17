@@ -17,7 +17,8 @@ export type Product = {
   volume?: string
   /**
    * Preț de vânzare cu amănuntul, în lei (RON), din lista clientului
-   * („Aqua Mineral Retail Prices", oct. 2026). Lipsă = fără preț afișat.
+   * („Complete range price list Aqua", oct. 2026). Lipsă = „În curând"
+   * (dacă brandul are listă de prețuri) sau nimic.
    */
   price?: number
 }
@@ -77,6 +78,7 @@ export const brands: Brand[] = [
           {
             slug: 'total-silk-body-scrub',
             name: 'Total Silk Body Scrub — Forest Dreams',
+            price: 120,
             image: '/products/aqua/total-silk-body-scrub.jpg',
             description: 'Exfoliant corporal spa, pentru piele netedă și catifelată.',
             activeIngredients: 'Dead Sea minerals, săruri minerale, ulei de sâmburi de struguri, susan, migdale dulci.',
@@ -88,6 +90,7 @@ export const brands: Brand[] = [
           {
             slug: 'blissful-body-butter',
             name: 'Blissful Body Butter — Starlight Glamour',
+            price: 120,
             image: '/products/aqua/blissful-body-butter.jpg',
             description: 'Unt de corp bogat, pentru hidratare și confort de durată.',
             activeIngredients: 'Shea butter, ulei de măsline, avocado, sâmburi de struguri, vitamine E & C, Dunaliella Salina.',
@@ -215,6 +218,7 @@ export const brands: Brand[] = [
           {
             slug: 'replenishing-night-cream',
             name: 'Replenishing Night Cream',
+            price: 291,
             image: '/products/aqua/replenishing-night-cream.jpg',
             description: 'Cremă de noapte pentru confort, refacere și suplețe.',
             activeIngredients: 'Dead Sea minerals, ingrediente nutritive și emoliente.',
@@ -273,6 +277,7 @@ export const brands: Brand[] = [
             slug: 'miracle-serum-capsules',
             name: 'Miracle Serum Capsules',
             volume: '30 capsule',
+            price: 426,
             image: '/products/aqua/miracle-serum-capsules.jpg',
             description: 'Capsule serum concentrat pentru glow și rutină intensivă.',
             activeIngredients: 'Dead Sea water, vitamina E, collagen / complex revitalizant.',
@@ -305,6 +310,7 @@ export const brands: Brand[] = [
             slug: 'supreme-eye-lip-cream',
             name: 'Supreme Eye & Lip Cream',
             volume: '30 ml',
+            price: 282,
             image: '/products/aqua/supreme-eye-lip-cream.jpg',
             description: 'Cremă dedicată zonelor delicate: ochi și buze.',
             activeIngredients: 'Resistem™, uleiuri naturale, vitamine, ingrediente pentru elasticitate.',
@@ -317,6 +323,7 @@ export const brands: Brand[] = [
             slug: 'supreme-face-cream',
             name: 'Supreme Face Cream',
             volume: '50 ml',
+            price: 309,
             image: '/products/aqua/supreme-face-cream.jpg',
             description: 'Cremă premium pentru piele matură, confort și protecție.',
             activeIngredients: 'Resistem™, capsule vitamina E, ingrediente hidratante și antioxidante.',
@@ -342,6 +349,7 @@ export const brands: Brand[] = [
             slug: 'supreme-thermal-mask',
             name: 'Supreme Thermal Mask',
             volume: '100 ml',
+            price: 534,
             image: '/products/aqua/supreme-thermal-mask.jpg',
             description: 'Mască termică pentru detox, deschidere pori și confort.',
             activeIngredients: 'Resistem™, Q10, Dead Sea minerals, efect termic la contact cu apa.',
@@ -545,6 +553,7 @@ export const brands: Brand[] = [
           {
             slug: 'sheet-mask-nourishing',
             name: 'Sheet Mask Nourishing',
+            price: 57,
             image: '/products/aqua/sheet-mask-nourishing.jpg',
             description: 'Sheet mask hrănitoare pentru hidratare profundă, suplețe și un aspect catifelat încă de la prima aplicare.',
             activeIngredients: 'Dead Sea minerals, hyaluronic acid, ulei de jojoba, vitamine E.',
