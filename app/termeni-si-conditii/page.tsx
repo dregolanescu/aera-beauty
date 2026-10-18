@@ -12,7 +12,7 @@ export default function TermeniSiConditiiPage() {
     <LegalPage
       eyebrow="Termeni"
       title="Termeni și condiții"
-      lastUpdated="15 mai 2026"
+      lastUpdated="18 octombrie 2026"
     >
       <p>
         Acești termeni reglementează utilizarea site-ului{' '}
@@ -25,8 +25,7 @@ export default function TermeniSiConditiiPage() {
       <h2>1. Cine suntem</h2>
       <p>
         Site-ul este operat de <strong>SC AERA SCENTT SRL</strong>, importator
-        unic în România al brandurilor Aqua Mineral, Oliere Paris și Redefine
-        Matcha.
+        unic în România al brandului Aqua Mineral.
       </p>
       <ul>
         <li>Sediu: Str. Panait Cerna nr. 7, bl. M44, sc. 3, et. 7, ap. 93, Sector 3, București</li>
@@ -68,8 +67,7 @@ export default function TermeniSiConditiiPage() {
       <p>
         Toate elementele site-ului — texte, fotografii, ilustrații, design,
         logo-uri, mărci înregistrate — sunt proprietatea SC AERA SCENTT SRL,
-        a brandurilor partenere (Aqua Mineral, Oliere Paris, Redefine Matcha)
-        sau a licențiatorilor noștri.
+        a brandurilor partenere sau a licențiatorilor noștri.
       </p>
       <p>
         Conținutul este protejat de legislația privind drepturile de autor și
@@ -79,9 +77,9 @@ export default function TermeniSiConditiiPage() {
         ocazionale, în condițiile legii.
       </p>
       <p>
-        Mărcile <em>AERA Beauty</em>, <em>Aqua Mineral</em>,{' '}
-        <em>Oliere Paris</em> și <em>Redefine Matcha</em> aparțin titularilor
-        respectivi și sunt utilizate pe baza acordurilor comerciale în vigoare.
+        Mărcile <em>AERA Beauty</em> și <em>Aqua Mineral</em> aparțin
+        titularilor respectivi și sunt utilizate pe baza acordurilor comerciale
+        în vigoare.
       </p>
 
       <h2>5. Formularele de pe site</h2>

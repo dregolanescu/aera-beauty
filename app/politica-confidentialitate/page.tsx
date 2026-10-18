@@ -12,7 +12,7 @@ export default function PoliticaConfidentialitatePage() {
     <LegalPage
       eyebrow="Confidențialitate & GDPR"
       title="Politica de confidențialitate"
-      lastUpdated="15 mai 2026"
+      lastUpdated="18 octombrie 2026"
     >
       <p>
         Confidențialitatea ta contează. Această politică descrie cum colectăm,
@@ -24,8 +24,8 @@ export default function PoliticaConfidentialitatePage() {
       <h2>1. Cine suntem</h2>
       <p>
         Operatorul de date este <strong>SC AERA SCENTT SRL</strong>, persoană
-        juridică română, importator unic în România al brandurilor Aqua
-        Mineral, Oliere Paris și Redefine Matcha.
+        juridică română, importator unic în România al brandului Aqua
+        Mineral.
       </p>
       <ul>
         <li>Sediu: Str. Panait Cerna nr. 7, bl. M44, sc. 3, et. 7, ap. 93, Sector 3, București</li>
