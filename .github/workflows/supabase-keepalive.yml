@@ -16,13 +16,15 @@ name: Supabase keep-alive
 #
 # Workflow-ul devine roșu (adică primești mail de la GitHub) dacă:
 #   - Supabase nu răspunde (proiect pe pauză sau inaccesibil), sau
-#   - keep-alive-ul de pe Vercel n-a mai scris de cel puțin 3 ore.
+#   - rândul scris de cron-ul de pe Vercel lipsește ori are cel puțin 3 ore.
+# Mailul pentru o rulare programată eșuată merge la contul care a modificat ultima
+# dată linia `cron` de mai jos (GitHub → Settings → Notifications → Actions).
 #
 # Nu atingem niciodată `precomenzi` / `colaborari` — alea conțin date GDPR.
 #
 # Atenție: repo-ul e public, iar GitHub dezactivează singur workflow-urile programate
 # după 60 de zile fără niciun commit. De asta există și cron-ul de pe Vercel, care
-# trimite alertă în Sentry când rândul scris de aici e mai vechi de 24h.
+# trimite eroare în Sentry (o dată pe zi) când rândul scris de aici e mai vechi de 24h.
 # Reactivare: tab-ul Actions → Supabase keep-alive → Enable workflow.
 
 on:
@@ -93,8 +95,8 @@ jobs:
           # 3) Heartbeat-ul de pe Vercel (id = 2) trebuie să fie proaspăt
           VERCEL_PING="$(jq -r '.[] | select(.id == 2) | .last_ping' "$BODY_FILE")"
           if [ -z "$VERCEL_PING" ]; then
-            echo "::warning::Cron-ul de pe Vercel n-a scris încă niciodată (lipsește rândul id = 2). Verifică CRON_SECRET și Settings → Cron Jobs în proiectul Vercel."
-            exit 0
+            echo "::error::Cron-ul de pe Vercel n-a scris niciodată (lipsește rândul id = 2). Verifică CRON_SECRET și Settings → Cron Jobs în proiectul Vercel; imediat după deploy, apasă Run pe cron. Scrierea din GitHub a reușit."
+            exit 1
           fi
           AGE_H=$(( ( $(date -u +%s) - $(date -u -d "$VERCEL_PING" +%s) ) / 3600 ))
           echo "Ultimul ping de pe Vercel: $VERCEL_PING (acum ${AGE_H}h)"

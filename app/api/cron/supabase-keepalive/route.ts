@@ -15,13 +15,16 @@ import { getSupabase } from '@/lib/supabase'
  *   1. scrie (upsert) rândul propriu în `public.keepalive` (id = 2, source = vercel-cron);
  *   2. citește toate rândurile din `keepalive`;
  *   3. verifică rândul scris de GitHub Actions (id = 1): dacă n-a mai fost actualizat de
- *      peste 24h (workflow dezactivat de GitHub, secrete greșite etc.), alertă în Sentry.
- * Simetric, workflow-ul din GitHub verifică rândul ăsta și devine roșu dacă Vercel tace.
+ *      peste 24h (de ex. GitHub a dezactivat workflow-ul după 60 de zile fără commit-uri),
+ *      trimite o eroare în Sentry, cel mult o dată pe zi.
+ * Simetric, workflow-ul din GitHub verifică rândul ăsta și devine roșu dacă rândul Vercel
+ * lipsește sau e mai vechi de 3h.
  *
  * Nu atinge niciodată `precomenzi` / `colaborari` (date GDPR).
  *
  * Securitate: Vercel trimite automat `Authorization: Bearer <CRON_SECRET>` la fiecare
  * invocare. Fără CRON_SECRET setat în proiect, endpoint-ul refuză tot (fail closed).
+ * Headerul Authorization e scos din evenimentele Sentry în sentry.server.config.ts.
  *
  * ATENȚIE la mutarea pe alt cont Vercel: planul Hobby acceptă doar cron-uri zilnice, iar
  * un program din oră în oră face deploy-ul să pice. Pe Hobby, pune în vercel.json un
@@ -40,6 +43,16 @@ const DB_TIMEOUT_MS = 10_000
 
 type KeepaliveRow = { id: number; last_ping: string; source: string | null }
 type DbError = { message?: string; code?: string }
+
+/**
+ * Alerta „GitHub tace" se trimite cel mult o dată pe zi, ca să nu consume cota Sentry:
+ * la rularea în care vârsta rândului trece de 24h, apoi la 48h, 72h etc. (cron-ul rulează
+ * din oră în oră). Dacă rândul lipsește cu totul, la rularea de la 08:xx UTC.
+ */
+function shouldAlertGithubStale(ageHours: number | null, now: Date): boolean {
+  if (ageHours === null) return now.getUTCHours() === 8
+  return ageHours > GITHUB_STALE_AFTER_HOURS && Math.floor(ageHours) % 24 === 0
+}
 
 function isAuthorized(header: string | null, secret: string): boolean {
   const received = Buffer.from(header ?? '')
@@ -71,13 +84,11 @@ async function respond(body: Record<string, unknown>, status: number, reported: 
 export async function GET(req: Request): Promise<Response> {
   const secret = process.env.CRON_SECRET
   if (!secret) {
+    // Fără eveniment Sentry aici: ruta e publică, deci oricine ar putea genera alerte.
+    // Lipsa secretului o prinde workflow-ul din GitHub (rândul id = 2 lipsește sau
+    // îmbătrânește, iar rularea devine roșie).
     console.error('[keepalive] CRON_SECRET lipsește din variabilele de mediu')
-    Sentry.captureMessage('[keepalive] CRON_SECRET not configured', {
-      level: 'error',
-      tags: { job: 'supabase-keepalive' },
-      fingerprint: ['supabase-keepalive', 'cron-secret-missing'],
-    })
-    return respond({ ok: false, error: 'cron_not_configured' }, 500, true)
+    return new Response('Cron not configured', { status: 500 })
   }
 
   if (!isAuthorized(req.headers.get('authorization'), secret)) {
@@ -131,10 +142,15 @@ export async function GET(req: Request): Promise<Response> {
       : Math.round(((now.getTime() - githubLastPing) / 3_600_000) * 10) / 10
 
     const githubStale = githubAgeHours === null || githubAgeHours > GITHUB_STALE_AFTER_HOURS
+    const alerted = githubStale && shouldAlertGithubStale(githubAgeHours, now)
     if (githubStale) {
       console.warn('[keepalive] GitHub Actions keep-alive stale:', githubAgeHours, 'h')
+    }
+    if (alerted) {
+      // Nivel `error`: un `warning` primește prioritate medie în Sentry și nu declanșează
+      // regula implicită de alertă (doar pentru prioritate mare).
       Sentry.captureMessage('[keepalive] GitHub Actions keep-alive nu mai scrie în Supabase', {
-        level: 'warning',
+        level: 'error',
         tags: { job: 'supabase-keepalive' },
         extra: { github_age_hours: githubAgeHours, github_last_ping: github?.last_ping ?? null },
         fingerprint: ['supabase-keepalive', 'github-stale'],
@@ -142,9 +158,15 @@ export async function GET(req: Request): Promise<Response> {
     }
 
     return respond(
-      { ok: true, wrote: now.toISOString(), github_age_hours: githubAgeHours },
+      {
+        ok: true,
+        wrote: now.toISOString(),
+        github_age_hours: githubAgeHours,
+        github_stale: githubStale,
+        alerted,
+      },
       200,
-      githubStale,
+      alerted,
     )
   } catch (err) {
     console.error('[keepalive] unexpected error:', err)
