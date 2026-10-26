@@ -2,32 +2,52 @@ name: Supabase keep-alive
 
 # Previne pauza automată a proiectului Supabase pe planul free.
 #
-# Istoric: prima versiune făcea un SELECT minimal de 2 ori pe săptămână.
-# A rulat verde (HTTP 200) pe 16 și 20 iul 2026, dar Supabase a pauzat
-# proiectul oricum pe 22 iul — un read pe un tabel gol e prea ieftin ca
-# resurse și nu resetează contorul lor de "low activity".
+# Istoric:
+# - v1 (15 iul 2026): un SELECT minimal de 2 ori pe săptămână. A rulat verde, dar
+#   Supabase a pauzat proiectul oricum pe 22 iul.
+# - v2 (22 iul 2026): un upsert (scriere reală) o dată pe zi. A rulat verde în fiecare
+#   zi, iar Supabase a trimis tot avertisment de pauză (17 aug și 26 oct 2026).
+#   Documentația lor cere „a few user requests to the database each day". Un singur
+#   request pe zi e sub prag, iar site-ul atinge baza de date doar la formulare.
+# - v3 (26 oct 2026): două surse independente, care se păzesc reciproc:
+#     • Vercel Cron, din oră în oră → app/api/cron/supabase-keepalive (rândul id = 2)
+#     • workflow-ul ăsta, la fiecare 3 ore (rândul id = 1)
+#   Fiecare rulare scrie ȘI citește: cam 64 de requesturi pe zi, în loc de unul.
 #
-# Versiunea asta face o SCRIERE reală (upsert), ZILNIC, într-o tabelă
-# dedicată `keepalive` — ca să nu atingem niciodată datele GDPR din
-# `precomenzi` / `colaborari`.
+# Workflow-ul devine roșu (adică primești mail de la GitHub) dacă:
+#   - Supabase nu răspunde (proiect pe pauză sau inaccesibil), sau
+#   - rândul scris de cron-ul de pe Vercel lipsește ori are cel puțin 3 ore.
+# Mailul pentru o rulare programată eșuată merge la contul care a modificat ultima
+# dată linia `cron` de mai jos (GitHub → Settings → Notifications → Actions).
 #
-# Bonus: dacă proiectul e totuși pauzat, requestul pică și workflow-ul
-# devine roșu — deci primești notificare de la GitHub, nu afli peste 3
-# săptămâni dintr-un email de la Supabase.
+# Nu atingem niciodată `precomenzi` / `colaborari` — alea conțin date GDPR.
+#
+# Atenție: repo-ul e public, iar GitHub dezactivează singur workflow-urile programate
+# după 60 de zile fără niciun commit. De asta există și cron-ul de pe Vercel, care
+# trimite eroare în Sentry (o dată pe zi) când rândul scris de aici e mai vechi de 24h.
+# Reactivare: tab-ul Actions → Supabase keep-alive → Enable workflow.
 
 on:
   schedule:
-    - cron: '0 6 * * *' # Zilnic la 06:00 UTC
+    - cron: '37 */3 * * *' # La 3 ore, la minutul 37: joburile programate la fix sunt amânate sau sărite mai des
   workflow_dispatch: {} # Buton de rulare manuală din tab-ul Actions
+
+permissions: {}
+
+concurrency:
+  group: supabase-keepalive
+  cancel-in-progress: false
 
 jobs:
   ping:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
-      - name: Upsert în tabela keepalive (activitate reală pe DB)
+      - name: Scriere + citire în tabela keepalive, verificare heartbeat Vercel
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          VERCEL_STALE_AFTER_HOURS: '3'
         run: |
           set -uo pipefail
 
@@ -36,26 +56,53 @@ jobs:
             exit 1
           fi
 
-          NOW=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-          BODY=$(printf '{"id":1,"last_ping":"%s","source":"github-actions"}' "$NOW")
+          REST="${SUPABASE_URL%/}/rest/v1/keepalive"
+          BODY_FILE="$(mktemp)"
 
-          RESP=$(curl -s -w "\n%{http_code}" -X POST \
-            "${SUPABASE_URL}/rest/v1/keepalive" \
-            -H "apikey: ${SUPABASE_KEY}" \
-            -H "Authorization: Bearer ${SUPABASE_KEY}" \
+          # Retry pe orice eroare: o sincopă de rețea nu trebuie să dea alarmă falsă.
+          # Scrierea e un upsert pe același rând, deci se poate repeta fără efecte.
+          call() {
+            curl -sS --max-time 20 --retry 3 --retry-all-errors --retry-delay 10 \
+              -o "$BODY_FILE" -w '%{http_code}' \
+              -H "apikey: ${SUPABASE_KEY}" \
+              -H "Authorization: Bearer ${SUPABASE_KEY}" \
+              "$@"
+          }
+
+          # 1) Scriere reală — rândul GitHub (id = 1)
+          NOW="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          HTTP="$(call -X POST "$REST" \
             -H "Content-Type: application/json" \
-            -H "Prefer: resolution=merge-duplicates,return=representation" \
-            -d "$BODY")
-
-          HTTP=$(printf '%s' "$RESP" | tail -n1)
-          PAYLOAD=$(printf '%s' "$RESP" | sed '$d')
-
-          echo "HTTP status: $HTTP"
-          echo "Răspuns: $PAYLOAD"
-
+            -H "Prefer: resolution=merge-duplicates,return=minimal" \
+            -d "{\"id\":1,\"last_ping\":\"${NOW}\",\"source\":\"github-actions\"}")" || HTTP=000
+          echo "Scriere: HTTP $HTTP"
           if [ "$HTTP" -lt 200 ] || [ "$HTTP" -ge 300 ]; then
-            echo "::error::Keep-alive a eșuat (status $HTTP). Proiectul Supabase poate fi pe pauză."
+            echo "::error::Scrierea în keepalive a eșuat (HTTP $HTTP). Proiectul Supabase poate fi pe pauză."
+            cat "$BODY_FILE"
             exit 1
           fi
 
-          echo "Keep-alive OK — scriere confirmată în tabela keepalive."
+          # 2) Citire — toate rândurile
+          HTTP="$(call "${REST}?select=id,last_ping,source&order=id")" || HTTP=000
+          echo "Citire: HTTP $HTTP"
+          if [ "$HTTP" != "200" ]; then
+            echo "::error::Citirea din keepalive a eșuat (HTTP $HTTP)."
+            cat "$BODY_FILE"
+            exit 1
+          fi
+          jq -r '.[] | "  id=\(.id)  \(.source)  \(.last_ping)"' "$BODY_FILE"
+
+          # 3) Heartbeat-ul de pe Vercel (id = 2) trebuie să fie proaspăt
+          VERCEL_PING="$(jq -r '.[] | select(.id == 2) | .last_ping' "$BODY_FILE")"
+          if [ -z "$VERCEL_PING" ]; then
+            echo "::error::Cron-ul de pe Vercel n-a scris niciodată (lipsește rândul id = 2). Verifică CRON_SECRET și Settings → Cron Jobs în proiectul Vercel; imediat după deploy, apasă Run pe cron. Scrierea din GitHub a reușit."
+            exit 1
+          fi
+          AGE_H=$(( ( $(date -u +%s) - $(date -u -d "$VERCEL_PING" +%s) ) / 3600 ))
+          echo "Ultimul ping de pe Vercel: $VERCEL_PING (acum ${AGE_H}h)"
+          if [ "$AGE_H" -ge "$VERCEL_STALE_AFTER_HOURS" ]; then
+            echo "::error::Keep-alive-ul de pe Vercel n-a mai scris de ${AGE_H}h. Verifică Vercel → aera-beauty → Settings → Cron Jobs și variabila CRON_SECRET. Scrierea din GitHub a reușit."
+            exit 1
+          fi
+
+          echo "Keep-alive OK — scriere și citire confirmate, iar heartbeat-ul de pe Vercel e la zi."
