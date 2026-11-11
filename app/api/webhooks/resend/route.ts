@@ -65,6 +65,28 @@ function recipientDomain(to: string): string {
   return domain ? domain : 'necunoscut'
 }
 
+/**
+ * Domeniul de pe care trimite acest site. Contul Resend e comun mai multor produse,
+ * iar un webhook primește evenimentele TUTUROR domeniilor din cont, nu doar pe ale
+ * noastre — Resend nu oferă filtrare pe domeniu la nivel de webhook.
+ */
+const OWN_SENDER_DOMAIN = 'aerabeauty.ro'
+
+/**
+ * Adevărat doar dacă expeditorul evenimentului este o adresă de pe domeniul nostru.
+ * Acceptă cele două forme pe care le trimite Resend: `Nume <adresa@domeniu>` și
+ * `adresa@domeniu`. Orice altceva (lipsă, alt tip, formă neașteptată, alt domeniu,
+ * subdomeniu) e respins: la îndoială nu procesăm.
+ */
+function isOwnSender(from: unknown): boolean {
+  if (typeof from !== 'string') return false
+  const trimmed = from.trim()
+  const bracketed = /<([^<>]*)>$/.exec(trimmed)
+  const address = bracketed ? bracketed[1] : trimmed
+  if (!/^[^\s<>@,;]+@[^\s<>@,;]+$/.test(address)) return false
+  return address.slice(address.indexOf('@') + 1).toLowerCase() === OWN_SENDER_DOMAIN
+}
+
 export async function POST(req: Request): Promise<Response> {
   const secret = process.env.RESEND_WEBHOOK_SECRET
   if (!secret) {
@@ -88,7 +110,16 @@ export async function POST(req: Request): Promise<Response> {
     return new Response('Invalid JSON', { status: 400 })
   }
 
-  if (event.type === 'email.bounced' || event.type === 'email.complained') {
+  // Izolare între produse: evenimentul e autentic (semnătura a trecut), dar poate
+  // aparține altui domeniu din același cont Resend. Îl confirmăm cu 200, ca Resend să
+  // nu-l retrimită, și ne oprim aici — fără log, fără Sentry, fără alertă. Datele lui
+  // (destinatar, subiect) aparțin clienților altui produs și nu au ce căuta la noi.
+  // Filtrul stă înaintea oricărui efect secundar; nu muta nimic deasupra lui.
+  if (!isOwnSender(event?.data?.from)) {
+    return new Response('ok', { status: 200 })
+  }
+
+  if (event.type ==='email.bounced' || event.type === 'email.complained') {
     const toRaw = event.data?.to
     const to = Array.isArray(toRaw) ? toRaw.join(', ') : (toRaw ?? 'necunoscut')
     const subject = event.data?.subject ?? '(fără subiect)'
